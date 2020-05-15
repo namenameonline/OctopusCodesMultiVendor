@@ -1,0 +1,1594 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="OctopusCodesMultiVendorsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="250" />
+          <Property Name="Password" Type="varchar" MaxLength="250" />
+          <Property Name="FullName" Type="varchar" MaxLength="250" />
+          <Property Name="Address" Type="varchar" MaxLength="250" />
+          <Property Name="Email" Type="varchar" MaxLength="250" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AccountAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LineAddress1" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="LineAddress2" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="City" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="ParentId" Type="int" />
+          <Property Name="VendorId" Type="int" />
+        </EntityType>
+        <EntityType Name="ForgetPassword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MemberShip">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Description" Type="ntext" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Month" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MemberShipVendor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemerShipId" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="EndDate" Type="date" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="250" />
+          <Property Name="Body" Type="ntext" />
+          <Property Name="DateCreation" Type="date" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrderAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LineAddress1" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="LineAddress2" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="City" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="DateCreation" Type="date" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="OrderStatusId" Type="int" Nullable="false" />
+          <Property Name="PaymentId" Type="int" />
+          <Property Name="PaymentStatusId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrdersDetail">
+          <Key>
+            <PropertyRef Name="OrderId" />
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrderStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Page">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Plug" Type="varchar" MaxLength="250" />
+          <Property Name="Title" Type="varchar" MaxLength="250" />
+          <Property Name="Detail" Type="ntext" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PaymentStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="Main" Type="bit" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Description" Type="ntext" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CategoryId" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="Views" Type="int" Nullable="false" />
+          <Property Name="WeightInGrams" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RajaOngkir_CityMapping">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="city_id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="province_id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="province" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="type" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="city_name" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="postal_code" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Review">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="Detail" Type="ntext" />
+          <Property Name="DatePost" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="varchar" MaxLength="250" />
+          <Property Name="Value" Type="ntext" />
+          <Property Name="Group" Type="varchar" MaxLength="250" />
+          <Property Name="TypeOfControl" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="250" />
+          <Property Name="Password" Type="varchar" MaxLength="250" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Email" Type="varchar" MaxLength="250" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="Logo" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VendorAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LineAddress1" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="LineAddress2" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="City" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VendorPendingPayment">
+          <Key>
+            <PropertyRef Name="PaymentOrderID" />
+          </Key>
+          <Property Name="PaymentOrderID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="MerchandiseAmount" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="DeliveryFee" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_AccountAddress_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="AccountAddress" Type="Self.AccountAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccountAddress">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Category_Category">
+          <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+          <End Role="Category1" Type="Self.Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Category_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="Category" Type="Self.Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberShipVendor_MemberShip">
+          <End Role="MemberShip" Type="Self.MemberShip" Multiplicity="1" />
+          <End Role="MemberShipVendor" Type="Self.MemberShipVendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MemberShip">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MemberShipVendor">
+              <PropertyRef Name="MemerShipId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberShipVendor_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="MemberShipVendor" Type="Self.MemberShipVendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MemberShipVendor">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Message_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Message_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderAddress_Orders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="OrderAddress" Type="Self.OrderAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderAddress">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_OrderStatus">
+          <End Role="OrderStatus" Type="Self.OrderStatus" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="OrderStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Payment">
+          <End Role="Payment" Type="Self.Payment" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_PaymentStatus">
+          <End Role="PaymentStatus" Type="Self.PaymentStatus" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="PaymentStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrdersDetail_Orders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="OrdersDetail" Type="Self.OrdersDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrdersDetail">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrdersDetail_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="OrdersDetail" Type="Self.OrdersDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrdersDetail">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Photo_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="Photo" Type="Self.Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_Category">
+          <End Role="Category" Type="Self.Category" Multiplicity="1" />
+          <End Role="Product" Type="Self.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Product" Type="Self.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Review_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="Review" Type="Self.Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Review">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Review_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Review" Type="Self.Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Review">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorAddress_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="VendorAddress" Type="Self.VendorAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorAddress">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingPayment_Orders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="VendorPendingPayment" Type="Self.VendorPendingPayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingPayment">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingPayment_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="VendorPendingPayment" Type="Self.VendorPendingPayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingPayment">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="OctopusCodesMultiVendorsModelStoreContainer">
+          <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountAddress" EntityType="Self.AccountAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ForgetPassword" EntityType="Self.ForgetPassword" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MemberShip" EntityType="Self.MemberShip" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MemberShipVendor" EntityType="Self.MemberShipVendor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Message" EntityType="Self.Message" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderAddress" EntityType="Self.OrderAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrdersDetail" EntityType="Self.OrdersDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderStatus" EntityType="Self.OrderStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Page" EntityType="Self.Page" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Payment" EntityType="Self.Payment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PaymentStatus" EntityType="Self.PaymentStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Photo" EntityType="Self.Photo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RajaOngkir_CityMapping" EntityType="Self.RajaOngkir_CityMapping" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Review" EntityType="Self.Review" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Setting" EntityType="Self.Setting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VendorAddress" EntityType="Self.VendorAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VendorPendingPayment" EntityType="Self.VendorPendingPayment" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_AccountAddress_Account" Association="Self.FK_AccountAddress_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="AccountAddress" EntitySet="AccountAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Category_Category" Association="Self.FK_Category_Category">
+            <End Role="Category" EntitySet="Category" />
+            <End Role="Category1" EntitySet="Category" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Category_Vendor" Association="Self.FK_Category_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Category" EntitySet="Category" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberShipVendor_MemberShip" Association="Self.FK_MemberShipVendor_MemberShip">
+            <End Role="MemberShip" EntitySet="MemberShip" />
+            <End Role="MemberShipVendor" EntitySet="MemberShipVendor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberShipVendor_Vendor" Association="Self.FK_MemberShipVendor_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="MemberShipVendor" EntitySet="MemberShipVendor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Message_Account" Association="Self.FK_Message_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Message_Vendor" Association="Self.FK_Message_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderAddress_Orders" Association="Self.FK_OrderAddress_Orders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrderAddress" EntitySet="OrderAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Account" Association="Self.FK_Orders_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_OrderStatus" Association="Self.FK_Orders_OrderStatus">
+            <End Role="OrderStatus" EntitySet="OrderStatus" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Payment" Association="Self.FK_Orders_Payment">
+            <End Role="Payment" EntitySet="Payment" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_PaymentStatus" Association="Self.FK_Orders_PaymentStatus">
+            <End Role="PaymentStatus" EntitySet="PaymentStatus" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Vendor" Association="Self.FK_Orders_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrdersDetail_Orders" Association="Self.FK_OrdersDetail_Orders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrdersDetail" EntitySet="OrdersDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrdersDetail_Product" Association="Self.FK_OrdersDetail_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="OrdersDetail" EntitySet="OrdersDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Photo_Product" Association="Self.FK_Photo_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Category" Association="Self.FK_Product_Category">
+            <End Role="Category" EntitySet="Category" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Vendor" Association="Self.FK_Product_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Review_Account" Association="Self.FK_Review_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="Review" EntitySet="Review" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Review_Vendor" Association="Self.FK_Review_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Review" EntitySet="Review" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorAddress_Vendor" Association="Self.FK_VendorAddress_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="VendorAddress" EntitySet="VendorAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingPayment_Orders" Association="Self.FK_VendorPendingPayment_Orders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="VendorPendingPayment" EntitySet="VendorPendingPayment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingPayment_Vendor" Association="Self.FK_VendorPendingPayment_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="VendorPendingPayment" EntitySet="VendorPendingPayment" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="OctopusCodesMultiVendorsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="OctopusCodesMultiVendorsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Accounts" EntityType="OctopusCodesMultiVendorsModel.Account" />
+          <EntitySet Name="Categories" EntityType="OctopusCodesMultiVendorsModel.Category" />
+          <EntitySet Name="MemberShips" EntityType="OctopusCodesMultiVendorsModel.MemberShip" />
+          <EntitySet Name="MemberShipVendors" EntityType="OctopusCodesMultiVendorsModel.MemberShipVendor" />
+          <EntitySet Name="Messages" EntityType="OctopusCodesMultiVendorsModel.Message" />
+          <EntitySet Name="Orders" EntityType="OctopusCodesMultiVendorsModel.Order" />
+          <EntitySet Name="OrdersDetails" EntityType="OctopusCodesMultiVendorsModel.OrdersDetail" />
+          <EntitySet Name="OrderStatus" EntityType="OctopusCodesMultiVendorsModel.OrderStatu" />
+          <EntitySet Name="Pages" EntityType="OctopusCodesMultiVendorsModel.Page" />
+          <EntitySet Name="Payments" EntityType="OctopusCodesMultiVendorsModel.Payment" />
+          <EntitySet Name="Photos" EntityType="OctopusCodesMultiVendorsModel.Photo" />
+          <EntitySet Name="Products" EntityType="OctopusCodesMultiVendorsModel.Product" />
+          <EntitySet Name="Reviews" EntityType="OctopusCodesMultiVendorsModel.Review" />
+          <EntitySet Name="Settings" EntityType="OctopusCodesMultiVendorsModel.Setting" />
+          <EntitySet Name="Vendors" EntityType="OctopusCodesMultiVendorsModel.Vendor" />
+          <AssociationSet Name="FK_Message_Account" Association="OctopusCodesMultiVendorsModel.FK_Message_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Account" Association="OctopusCodesMultiVendorsModel.FK_Orders_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Review_Account" Association="OctopusCodesMultiVendorsModel.FK_Review_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Category_Category" Association="OctopusCodesMultiVendorsModel.FK_Category_Category">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Category1" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Category_Vendor" Association="OctopusCodesMultiVendorsModel.FK_Category_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Category" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Category" Association="OctopusCodesMultiVendorsModel.FK_Product_Category">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberShipVendor_MemberShip" Association="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_MemberShip">
+            <End Role="MemberShip" EntitySet="MemberShips" />
+            <End Role="MemberShipVendor" EntitySet="MemberShipVendors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberShipVendor_Vendor" Association="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="MemberShipVendor" EntitySet="MemberShipVendors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Message_Vendor" Association="OctopusCodesMultiVendorsModel.FK_Message_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_OrderStatus" Association="OctopusCodesMultiVendorsModel.FK_Orders_OrderStatus">
+            <End Role="OrderStatu" EntitySet="OrderStatus" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Payment" Association="OctopusCodesMultiVendorsModel.FK_Orders_Payment">
+            <End Role="Payment" EntitySet="Payments" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Vendor" Association="OctopusCodesMultiVendorsModel.FK_Orders_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrdersDetail_Orders" Association="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Orders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrdersDetail" EntitySet="OrdersDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrdersDetail_Product" Association="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Product">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="OrdersDetail" EntitySet="OrdersDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Photo_Product" Association="OctopusCodesMultiVendorsModel.FK_Photo_Product">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Photo" EntitySet="Photos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Vendor" Association="OctopusCodesMultiVendorsModel.FK_Product_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Review_Vendor" Association="OctopusCodesMultiVendorsModel.FK_Review_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <EntitySet Name="ForgetPasswords" EntityType="OctopusCodesMultiVendorsModel.ForgetPassword" />
+          <EntitySet Name="AccountAddresses" EntityType="OctopusCodesMultiVendorsModel.AccountAddress" />
+          <AssociationSet Name="FK_AccountAddress_Account" Association="OctopusCodesMultiVendorsModel.FK_AccountAddress_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="AccountAddress" EntitySet="AccountAddresses" />
+          </AssociationSet>
+          <EntitySet Name="OrderAddresses" EntityType="OctopusCodesMultiVendorsModel.OrderAddress" />
+          <AssociationSet Name="FK_OrderAddress_Orders" Association="OctopusCodesMultiVendorsModel.FK_OrderAddress_Orders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderAddress" EntitySet="OrderAddresses" />
+          </AssociationSet>
+          <EntitySet Name="VendorAddresses" EntityType="OctopusCodesMultiVendorsModel.VendorAddress" />
+          <AssociationSet Name="FK_VendorAddress_Vendor" Association="OctopusCodesMultiVendorsModel.FK_VendorAddress_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="VendorAddress" EntitySet="VendorAddresses" />
+          </AssociationSet>
+          <EntitySet Name="RajaOngkir_CityMapping" EntityType="OctopusCodesMultiVendorsModel.RajaOngkir_CityMapping" />
+          <EntitySet Name="VendorPendingPayments" EntityType="OctopusCodesMultiVendorsModel.VendorPendingPayment" />
+          <AssociationSet Name="FK_VendorPendingPayment_Orders" Association="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Orders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="VendorPendingPayment" EntitySet="VendorPendingPayments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingPayment_Vendor" Association="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="VendorPendingPayment" EntitySet="VendorPendingPayments" />
+          </AssociationSet>
+          <EntitySet Name="PaymentStatus" EntityType="OctopusCodesMultiVendorsModel.PaymentStatu" />
+          <AssociationSet Name="FK_Orders_PaymentStatus" Association="OctopusCodesMultiVendorsModel.FK_Orders_PaymentStatus">
+            <End Role="PaymentStatu" EntitySet="PaymentStatus" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FullName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Messages" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Account" FromRole="Account" ToRole="Message" />
+          <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Account" FromRole="Account" ToRole="Order" />
+          <NavigationProperty Name="Reviews" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Account" FromRole="Account" ToRole="Review" />
+          <NavigationProperty Name="AccountAddresses" Relationship="OctopusCodesMultiVendorsModel.FK_AccountAddress_Account" FromRole="Account" ToRole="AccountAddress" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="VendorId" Type="Int32" />
+          <NavigationProperty Name="Category1" Relationship="OctopusCodesMultiVendorsModel.FK_Category_Category" FromRole="Category" ToRole="Category1" />
+          <NavigationProperty Name="Category2" Relationship="OctopusCodesMultiVendorsModel.FK_Category_Category" FromRole="Category1" ToRole="Category" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Category_Vendor" FromRole="Category" ToRole="Vendor" />
+          <NavigationProperty Name="Products" Relationship="OctopusCodesMultiVendorsModel.FK_Product_Category" FromRole="Category" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="MemberShip">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Month" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MemberShipVendors" Relationship="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_MemberShip" FromRole="MemberShip" ToRole="MemberShipVendor" />
+        </EntityType>
+        <EntityType Name="MemberShipVendor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemerShipId" Type="Int32" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <NavigationProperty Name="MemberShip" Relationship="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_MemberShip" FromRole="MemberShipVendor" ToRole="MemberShip" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_Vendor" FromRole="MemberShipVendor" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Body" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreation" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Account" FromRole="Message" ToRole="Account" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Vendor" FromRole="Message" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreation" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="OrderStatusId" Type="Int32" Nullable="false" />
+          <Property Name="PaymentId" Type="Int32" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Account" FromRole="Order" ToRole="Account" />
+          <NavigationProperty Name="OrderStatu" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_OrderStatus" FromRole="Order" ToRole="OrderStatu" />
+          <NavigationProperty Name="Payment" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Payment" FromRole="Order" ToRole="Payment" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Vendor" FromRole="Order" ToRole="Vendor" />
+          <NavigationProperty Name="OrdersDetails" Relationship="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Orders" FromRole="Order" ToRole="OrdersDetail" />
+          <NavigationProperty Name="OrderAddresses" Relationship="OctopusCodesMultiVendorsModel.FK_OrderAddress_Orders" FromRole="Order" ToRole="OrderAddress" />
+          <NavigationProperty Name="VendorPendingPayments" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Orders" FromRole="Order" ToRole="VendorPendingPayment" />
+          <Property Name="PaymentStatusId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PaymentStatu" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_PaymentStatus" FromRole="Order" ToRole="PaymentStatu" />
+        </EntityType>
+        <EntityType Name="OrdersDetail">
+          <Key>
+            <PropertyRef Name="OrderId" />
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Orders" FromRole="OrdersDetail" ToRole="Order" />
+          <NavigationProperty Name="Product" Relationship="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Product" FromRole="OrdersDetail" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="OrderStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_OrderStatus" FromRole="OrderStatu" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Page">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Plug" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Detail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Payment" FromRole="Payment" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="Main" Type="Boolean" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Product" Relationship="OctopusCodesMultiVendorsModel.FK_Photo_Product" FromRole="Photo" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CategoryId" Type="Int32" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="Views" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Category" Relationship="OctopusCodesMultiVendorsModel.FK_Product_Category" FromRole="Product" ToRole="Category" />
+          <NavigationProperty Name="OrdersDetails" Relationship="OctopusCodesMultiVendorsModel.FK_OrdersDetail_Product" FromRole="Product" ToRole="OrdersDetail" />
+          <NavigationProperty Name="Photos" Relationship="OctopusCodesMultiVendorsModel.FK_Photo_Product" FromRole="Product" ToRole="Photo" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Product_Vendor" FromRole="Product" ToRole="Vendor" />
+          <Property Name="WeightInGrams" Type="Double" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Review">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="Detail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DatePost" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Account" FromRole="Review" ToRole="Account" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Vendor" FromRole="Review" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Group" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="TypeOfControl" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Logo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Categories" Relationship="OctopusCodesMultiVendorsModel.FK_Category_Vendor" FromRole="Vendor" ToRole="Category" />
+          <NavigationProperty Name="MemberShipVendors" Relationship="OctopusCodesMultiVendorsModel.FK_MemberShipVendor_Vendor" FromRole="Vendor" ToRole="MemberShipVendor" />
+          <NavigationProperty Name="Messages" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Vendor" FromRole="Vendor" ToRole="Message" />
+          <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Vendor" FromRole="Vendor" ToRole="Order" />
+          <NavigationProperty Name="Products" Relationship="OctopusCodesMultiVendorsModel.FK_Product_Vendor" FromRole="Vendor" ToRole="Product" />
+          <NavigationProperty Name="Reviews" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Vendor" FromRole="Vendor" ToRole="Review" />
+          <NavigationProperty Name="VendorAddresses" Relationship="OctopusCodesMultiVendorsModel.FK_VendorAddress_Vendor" FromRole="Vendor" ToRole="VendorAddress" />
+          <NavigationProperty Name="VendorPendingPayments" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Vendor" FromRole="Vendor" ToRole="VendorPendingPayment" />
+        </EntityType>
+        <Association Name="FK_Message_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Message" Role="Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Review_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Review" Role="Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Review">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Category_Category">
+          <End Type="OctopusCodesMultiVendorsModel.Category" Role="Category" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.Category" Role="Category1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Category_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.Category" Role="Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_Category">
+          <End Type="OctopusCodesMultiVendorsModel.Category" Role="Category" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberShipVendor_MemberShip">
+          <End Type="OctopusCodesMultiVendorsModel.MemberShip" Role="MemberShip" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.MemberShipVendor" Role="MemberShipVendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MemberShip">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MemberShipVendor">
+              <PropertyRef Name="MemerShipId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberShipVendor_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.MemberShipVendor" Role="MemberShipVendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MemberShipVendor">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Message_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Message" Role="Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_OrderStatus">
+          <End Type="OctopusCodesMultiVendorsModel.OrderStatu" Role="OrderStatu" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="OrderStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Payment">
+          <End Type="OctopusCodesMultiVendorsModel.Payment" Role="Payment" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrdersDetail_Orders">
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.OrdersDetail" Role="OrdersDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrdersDetail">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrdersDetail_Product">
+          <End Type="OctopusCodesMultiVendorsModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.OrdersDetail" Role="OrdersDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrdersDetail">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Photo_Product">
+          <End Type="OctopusCodesMultiVendorsModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Photo" Role="Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Review_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Review" Role="Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Review">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ForgetPassword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AccountAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="LineAddress1" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="LineAddress2" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_AccountAddress_Account" FromRole="AccountAddress" ToRole="Account" />
+        </EntityType>
+        <Association Name="FK_AccountAddress_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.AccountAddress" Role="AccountAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccountAddress">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="OrderAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="LineAddress1" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="LineAddress2" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="OctopusCodesMultiVendorsModel.FK_OrderAddress_Orders" FromRole="OrderAddress" ToRole="Order" />
+        </EntityType>
+        <Association Name="FK_OrderAddress_Orders">
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.OrderAddress" Role="OrderAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderAddress">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="VendorAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="LineAddress1" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="LineAddress2" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_VendorAddress_Vendor" FromRole="VendorAddress" ToRole="Vendor" />
+        </EntityType>
+        <Association Name="FK_VendorAddress_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorAddress" Role="VendorAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorAddress">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="RajaOngkir_CityMapping">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="city_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="province_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="province" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="type" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="city_name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="postal_code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="VendorPendingPayment">
+          <Key>
+            <PropertyRef Name="PaymentOrderID" />
+          </Key>
+          <Property Name="PaymentOrderID" Type="Guid" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="MerchandiseAmount" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="DeliveryFee" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Orders" FromRole="VendorPendingPayment" ToRole="Order" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Vendor" FromRole="VendorPendingPayment" ToRole="Vendor" />
+        </EntityType>
+        <Association Name="FK_VendorPendingPayment_Orders">
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorPendingPayment" Role="VendorPendingPayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingPayment">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingPayment_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorPendingPayment" Role="VendorPendingPayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingPayment">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PaymentStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_PaymentStatus" FromRole="PaymentStatu" ToRole="Order" />
+        </EntityType>
+        <Association Name="FK_Orders_PaymentStatus">
+          <End Type="OctopusCodesMultiVendorsModel.PaymentStatu" Role="PaymentStatu" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentStatu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="PaymentStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="OctopusCodesMultiVendorsModelStoreContainer" CdmEntityContainer="OctopusCodesMultiVendorsEntities">
+          <EntitySetMapping Name="Accounts">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Account">
+              <MappingFragment StoreEntitySet="Account">
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Category">
+              <MappingFragment StoreEntitySet="Category">
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MemberShips">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.MemberShip">
+              <MappingFragment StoreEntitySet="MemberShip">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MemberShipVendors">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.MemberShipVendor">
+              <MappingFragment StoreEntitySet="MemberShipVendor">
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="MemerShipId" ColumnName="MemerShipId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Messages">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Message">
+              <MappingFragment StoreEntitySet="Message">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="DateCreation" ColumnName="DateCreation" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="PaymentStatusId" ColumnName="PaymentStatusId" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="OrderStatusId" ColumnName="OrderStatusId" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="DateCreation" ColumnName="DateCreation" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrdersDetails">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.OrdersDetail">
+              <MappingFragment StoreEntitySet="OrdersDetail">
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderStatus">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.OrderStatu">
+              <MappingFragment StoreEntitySet="OrderStatus">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pages">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Page">
+              <MappingFragment StoreEntitySet="Page">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Detail" ColumnName="Detail" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Plug" ColumnName="Plug" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Payments">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Payment">
+              <MappingFragment StoreEntitySet="Payment">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Photos">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Photo">
+              <MappingFragment StoreEntitySet="Photo">
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Main" ColumnName="Main" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Product">
+              <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="WeightInGrams" ColumnName="WeightInGrams" />
+                <ScalarProperty Name="Views" ColumnName="Views" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reviews">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Review">
+              <MappingFragment StoreEntitySet="Review">
+                <ScalarProperty Name="DatePost" ColumnName="DatePost" />
+                <ScalarProperty Name="Detail" ColumnName="Detail" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Setting">
+              <MappingFragment StoreEntitySet="Setting">
+                <ScalarProperty Name="TypeOfControl" ColumnName="TypeOfControl" />
+                <ScalarProperty Name="Group" ColumnName="Group" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Vendor">
+              <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ForgetPasswords">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.ForgetPassword">
+              <MappingFragment StoreEntitySet="ForgetPassword">
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountAddresses">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.AccountAddress">
+              <MappingFragment StoreEntitySet="AccountAddress">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="LineAddress2" ColumnName="LineAddress2" />
+                <ScalarProperty Name="LineAddress1" ColumnName="LineAddress1" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderAddresses">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.OrderAddress">
+              <MappingFragment StoreEntitySet="OrderAddress">
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="LineAddress2" ColumnName="LineAddress2" />
+                <ScalarProperty Name="LineAddress1" ColumnName="LineAddress1" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VendorAddresses">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.VendorAddress">
+              <MappingFragment StoreEntitySet="VendorAddress">
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="LineAddress2" ColumnName="LineAddress2" />
+                <ScalarProperty Name="LineAddress1" ColumnName="LineAddress1" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RajaOngkir_CityMapping">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.RajaOngkir_CityMapping">
+              <MappingFragment StoreEntitySet="RajaOngkir_CityMapping">
+                <ScalarProperty Name="postal_code" ColumnName="postal_code" />
+                <ScalarProperty Name="city_name" ColumnName="city_name" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="province" ColumnName="province" />
+                <ScalarProperty Name="province_id" ColumnName="province_id" />
+                <ScalarProperty Name="city_id" ColumnName="city_id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VendorPendingPayments">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.VendorPendingPayment">
+              <MappingFragment StoreEntitySet="VendorPendingPayment">
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="DeliveryFee" ColumnName="DeliveryFee" />
+                <ScalarProperty Name="MerchandiseAmount" ColumnName="MerchandiseAmount" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="PaymentOrderID" ColumnName="PaymentOrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaymentStatus">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.PaymentStatu">
+              <MappingFragment StoreEntitySet="PaymentStatus">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

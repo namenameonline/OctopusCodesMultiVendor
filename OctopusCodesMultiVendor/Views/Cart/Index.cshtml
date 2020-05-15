@@ -1,0 +1,254 @@
+﻿@{
+    /**/
+
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@using OctopusCodesMultiVendor.Models;
+@using OctopusCodesMultiVendor.Security;
+@model OctopusCodesMultiVendor.Models.ViewModels.CartViewModel
+
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">@Resources.UserTemplate.Home</a> <span class="divider">/</span></li>
+    <li class="active"> @Resources.Cart.PageTitle</li>
+</ul>
+<h3>  @Resources.Cart.PageTitle [ <small>@(Session["cart"] != null ? ((List<Item>)Session["cart"]).Count : 0) @(Resources.Cart.Item)(s) </small>]<a href="@Url.Action("Index", "Home")" class="btn btn-large pull-right"><i class="icon-arrow-left"></i> @Resources.Cart.Continue_Shopping </a></h3>
+<hr class="soft">
+
+<table class="table table-bordered" id="cartTable">
+    <thead>
+        <tr>
+            <th>@Resources.Cart.Option</th>
+            <th>@Resources.Cart.Id</th>
+            <th>@Resources.Cart.Name</th>
+            <th>@Resources.Cart.Photo</th>
+            <th>@Resources.Cart.Vendor_Name</th>
+            <th>@Resources.Cart.Quantity</th>
+            <th>@Resources.Cart.Price</th>
+            <th>Weight(gr)</th>
+            <th>Est</th>
+            <th>@Resources.Cart.Total</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Session["cart"] != null)
+        {
+            List<Item> cart = (List<Item>)Session["cart"];
+            foreach (var item in cart)
+            {
+                Product pr = (Product)item.product;
+                Photo mainPhoto = pr.Photos.SingleOrDefault(p => p.Main && p.Status);
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Remove", "Cart", new { id = item.product.Id })" class="btn btn-danger"><i class="icon-remove icon-white"></i></a>
+                    </td>
+                    <td>
+                        @item.product.Id
+                    </td>
+                    <td>
+                        @item.product.Name
+                    </td>
+                    <td>
+                        <img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" width="60" />
+                    </td>
+                    <td>
+                        @item.product.Vendor.Name
+                    </td>
+                    <td>
+                        <form method="post" action="@Url.Action("Update", "Cart")" id="frmUpdateQty">
+                            <div class="input-append">
+                                <input class="span1" style="max-width:50px" placeholder="1" id="appendedInputButtons" size="16" type="number" min="1" value="@item.quantity" name="quantity">
+                                <button class="btn" type="submit"><i class="icon-save"></i></button>
+                                <input type="hidden" name="productId" value="@item.product.Id" />
+                            </div>
+                        </form>
+                    </td>
+
+                    <td>@item.product.Price.ToString("c")</td>
+                    <td>@((item.quantity * item.product.WeightInGrams).ToString())</td>
+                    <td><div class="@("est" + item.product.VendorId)"></div></td>
+                    <td>
+                        @((item.product.Price * item.quantity).ToString("c"))
+                    </td>
+
+                </tr>
+            }
+            <tr>
+                <td colspan="7" style="text-align:right">Delivery Fee:	</td>
+                <td class="label" style="display:block">
+                    <strong>
+                        <div id="TotalDeliveryFee"></div>
+                    </strong>
+
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="7" style="text-align:right">@Resources.Cart.Total_Price:	</td>
+                <td class="label label-important" style="display:block"> <strong> @(cart.Sum(i => i.product.Price * i.quantity).ToString("c")) </strong></td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+<form method="post" action="@Url.Action("MakePayment", "Cart")">
+    <div class="box-body">
+        Address:
+        <div class="form-group">
+            <label>
+                Line Address 1
+            </label>
+            @Html.TextBoxFor(model => model.LineAddress1, new { @class = "form-control", required = "required", placeholder = "Address Line 1" })
+            @Html.ValidationMessageFor(model => model.LineAddress1)
+        </div>
+
+
+
+        <div class="form-group">
+            <label>
+                Line Address 2
+            </label>
+            @Html.TextBoxFor(model => model.LineAddress2, new { @class = "form-control", required = "required", placeholder = "Address Line 2" })
+            @Html.ValidationMessageFor(model => model.LineAddress2)
+        </div>
+
+        <div class="form-group">
+            <label>
+                City
+            </label>
+            @Html.TextBoxFor(model => model.City, new { @class = "form-control", required = "required", placeholder = "City" })
+            @Html.ValidationMessageFor(model => model.City)
+        </div>
+
+        <div class="form-group">
+            <label>
+                Zip Code
+            </label>
+            @Html.TextBoxFor(model => model.ZipCode, new { @class = "form-control", required = "required", placeholder = "Zip Code" })
+            @Html.ValidationMessageFor(model => model.ZipCode)
+        </div>
+
+
+    </div>
+
+    <div class="form-group">
+        <input type="button" value="View Delivery Options" onclick="RetrieveDeliveryFeeOptions()" />Supported by JNE
+    </div>
+    <div id="divDeliveryOption" class="form-group">
+    </div>
+    <br /><br />
+    <a href="@Url.Action("Index", "Home")" class="btn btn-large"><i class="icon-arrow-left"></i> @Resources.Cart.Continue_Shopping </a>
+
+    @if (SessionPersister.account == null)
+    {
+        <a href="@Url.Action("Login", "Customer")" class="btn btn-large pull-right">@Resources.Cart.Please_login_before_checkout <i class="icon-arrow-right"></i></a>
+    }
+    else
+    {
+        var account = SessionPersister.account;
+        if (account is Account && !((OctopusCodesMultiVendor.Models.Account)account).IsAdmin)
+        {
+            <button type="submit" class="btn btn-large btn-primary">@Resources.Cart.MakePayment</button>
+        }
+    }
+</form>
+<!-- Image loader -->
+
+<!-- Image loader -->
+<script language="javascript">
+    var $loading = $('#loading').hide();
+    $(document)
+        .ajaxStart(function () {
+            $loading.show();
+        })
+        .ajaxStop(function () {
+            $loading.hide();
+        });
+
+    var deliveryOptionJson;
+    function EstimateDeliveryFee(selectedOption) {
+        var option = deliveryOptionJson.DeliveryOption[selectedOption];
+        for (i = 0; i < option.detail.length; i++) {
+            var detail = option.detail[i];
+            $('.est' + detail.vendorid).each(function () {            //iterates all elements having stick class
+                $(this).text(detail.etd);
+            });
+
+        }
+    }
+    function RetrieveDeliveryFeeOptions() {
+        $.ajax(
+            {
+                url: "/Cart/CalculateDeliveryFee", // be consistent and case the route the same as the ApiController
+                type: "POST",
+                data: {
+                    'cityName': $('#City').val()
+                },
+                beforeSend: function () {
+                    // Show image container
+                    $("#loading-overlay").show();
+                },
+                success: function (result) {
+                    $('#divDeliveryOption').text('');
+                    //{ "totalFee": 0.0, "DeliveryOption": [{ "name": "Ongkos Kirim Ekonomis", "totalfee": 64000, "detail": [{ "vendorid": "20", "etd": "2-3" }, { "vendorid": "18", "etd": "2-3" }] }, { "name": "Layanan Reguler", "totalfee": 69000, "detail": [{ "vendorid": "20", "etd": "1-2" }, { "vendorid": "18", "etd": "1-2" }] }, { "name": "Yakin Esok Sampai", "totalfee": 108000, "detail": [{ "vendorid": "20", "etd": "1-1" }, { "vendorid": "18", "etd": "1-1" }] }] }
+                    deliveryOptionJson = JSON.parse(result);
+                    for (i = 0; i < deliveryOptionJson.DeliveryOption.length; i++) {
+                        var option = deliveryOptionJson.DeliveryOption[i];
+                        var deliveryOption = "<input onclick='EstimateDeliveryFee(" + i + ")' type='radio' name='SelectedDeliveryOption' value='" + option.name + "'>" + option.name + "-" + option.totalfee + "</input><br>";
+                        $('#divDeliveryOption').append(deliveryOption);
+                    }
+
+
+
+                    console.log(result);
+                },
+                error: function (xhr, status, p3, p4) {
+                    var err = "Error " + " " + status + " " + p3;
+                    if (xhr.responseText && xhr.responseText[0] == "{")
+                        err = JSON.parse(xhr.responseText).message;
+                    console.log(err);
+                },
+                complete: function (data) {
+                    // Hide image container
+                    $("#loading-overlay").hide();
+                }
+            });
+    }
+    function UpdateProductQuantity() {
+        $('#cartTable').css("progress");
+        var form = $('#frmUpdateQty');
+        $.ajax(
+            {
+                url: "/Cart/Update", // be consistent and case the route the same as the ApiController
+                type: "POST",
+                data:
+                    form.serialize()
+                ,
+                success: function (result) {
+
+
+                    if (result == "NOTOK")
+                        alert('Item not updated');
+                },
+                error: function (xhr, status, p3, p4) {
+                    alert('Item not updated');
+                    console.log(err);
+                }
+            });
+        $('#cartTable').css("");
+    }
+    function OnFormLoad() {
+        $('#cartTable').css("progress");
+        var city = $('#City').val();
+        if (city != '') {
+            RetrieveDeliveryFeeOptions();
+        }
+        $('#cartTable').css("");
+    }
+    $(document).ready(function () {
+        OnFormLoad();
+    });
+</script>
