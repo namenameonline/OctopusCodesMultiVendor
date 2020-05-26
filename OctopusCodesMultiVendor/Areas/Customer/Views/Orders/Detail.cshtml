@@ -28,7 +28,6 @@
             </address>
         </div>
         <!-- /.col -->
-        
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
             <b>Order Info</b><br>
@@ -72,16 +71,70 @@
                             <td>@((orderDetail.Price * @orderDetail.Quantity).ToString("c"))</td>
                         </tr>
                     }
+                    <tr>
+                        <td colspan="5">Delivery Fee:</td>
+                        <td>@ViewBag.deliveryfee.ToString("c")</td>
+                    </tr>
                 </tbody>
+
                 <tfoot>
                     <tr>
                         <td colspan="5" align="right">Total</td>
-                        <td>@s.ToString("c")</td>
+                        <td>
+                            @{
+                                decimal total = s + ViewBag.deliveryFee;
+                            }
+                            @total.ToString("c")
+                        </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
         <!-- /.col -->
     </div>
-    
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+
+            <div class="box-body">
+
+                <div class="form-group">
+                    <label for="parent">
+                        Estimated days:
+                    </label>
+
+                    @ViewBag.etd
+
+                </div>
+                <div class="form-group">
+                    <label for="parent">
+                        Start delivery date:
+                    </label>
+
+                    @ViewBag.std
+
+                </div>
+
+                <div class="form-group">
+                    <label for="parent">
+                        Tracking ID: @ViewBag.trackingId
+                    </label>
+                   
+                </div>
+                <div class="form-group">
+                    <label for="parent">
+                        Estimated Delivered Date:
+                    </label>
+
+                    @ViewBag.estdate
+
+                </div>
+
+            </div>
+            
+
+    </div>
+        <!-- /.col -->
+
+    </div>
+
 </section>

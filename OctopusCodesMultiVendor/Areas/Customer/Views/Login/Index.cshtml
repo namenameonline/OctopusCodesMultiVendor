@@ -68,13 +68,14 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-                        
+
                         <a href="@Url.Action("Forget", "../Customers")" class="text-center">Forget Password</a>
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
                         <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                     </div>
+                    <input type="hidden" class="form-control" placeholder="redirectUrl" name="redirectUrl" value="@ViewBag.redirectUrl">
                     <!-- /.col -->
                 </div>
             </form>

@@ -3,7 +3,7 @@
     Layout = "~/Areas/Vendor/Views/Shared/_LayoutPage.cshtml";
 }
 
-@model OctopusCodesMultiVendor.Models.ViewModels.ProductViewModel
+@model OctopusCodesMultiVendor.Models.ViewModels.Products.ProductViewModel
 
 <section class="content">
     <div class="row">
@@ -60,7 +60,7 @@
                             <label for="description">
                                 Description
                             </label>
-                            @Html.TextAreaFor(model => model.product.Description, new { @class = "form-control", placeholder = "Description" })
+                            @Html.TextAreaFor(model => model.product.Description, new { @class = "mceEditor", placeholder = "Description" })
                             @Html.ValidationMessageFor(model => model.product.Description)
                         </div>
 

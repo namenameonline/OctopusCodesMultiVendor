@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using OctopusCodesMultiVendor.Security;
 using OctopusCodesMultiVendor.Models.ViewModels;
+using OctopusCodesMultiVendor.Models.ViewModels.Products;
 
 namespace OctopusCodesMultiVendor.Areas.Admin.Controllers
 {

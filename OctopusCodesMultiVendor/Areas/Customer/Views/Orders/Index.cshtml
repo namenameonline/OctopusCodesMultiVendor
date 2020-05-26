@@ -31,7 +31,7 @@
                                             <th>Date Creation</th>
                                             <th>Vendor Name</th>
                                             <th class="no-sort">Order Status</th>
-                                            <th class="no-sort">Payment</th>
+                                            <th class="no-sort">Total</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -44,7 +44,14 @@
                                                 <td>@order.DateCreation.ToString("MM/dd/yyyy")</td>
                                                 <td>@order.Vendor.Name</td>
                                                 <td>@order.OrderStatu.Name</td>
-                                                <td>@(order.Payment != null ? order.Payment.Name : "")</td>
+                                                <td>
+                                                    @foreach (var payment in order.VendorPendingPayments)
+                                                    {
+
+                                                        @((payment.MerchandiseAmount + payment.DeliveryFee))
+
+                                                    }
+                                                </td>
                                                 <td>
                                                     <a href="@Url.Action("Detail", "Orders", new { id = order.Id })">View Detail</a>                       
                                                 </td>

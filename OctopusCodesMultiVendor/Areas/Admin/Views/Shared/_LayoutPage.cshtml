@@ -45,6 +45,7 @@
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="~/Content/Admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
     <link rel="stylesheet" href="~/Content/Admin/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="~/Content/User/themes/css/chat.css">
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -103,7 +104,7 @@
                     <li class="header">Front Site</li>
                     <li><a href="@Url.Action("Index", "../Home")"><i class="fa fa-reply"></i> <span>Home</span></a></li>
 
-                    <li class="@(Request.Url.Segments[2].ToString().Trim().StartsWith("Category") ? "active" : "") treeview"> 
+                    <li class="@(Request.Url.Segments[2].ToString().Trim().StartsWith("Category") ? "active" : "") treeview">
                         <a href="#">
                             <i class="fa fa-laptop"></i>
                             <span>Categories</span>
@@ -144,7 +145,7 @@
 
                         </ul>
                     </li>
-                                   
+
                     <li class="@(Request.Url.Segments[2].ToString().Trim().StartsWith("Account") ? "active" : "") treeview">
                         <a href="#">
                             <i class="fa fa-laptop"></i>
@@ -174,7 +175,19 @@
 
                         </ul>
                     </li>
+                    <li class="@(Request.Url.Segments[2].ToString().Trim().StartsWith("Message") ? "active" : "") treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>Messages</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="@Url.Action("Index", "Message")"><i class="fa fa-circle-o"></i> List</a></li>
 
+                        </ul>
+                    </li>
                     <li class="@(Request.Url.Segments[2].ToString().Trim().StartsWith("Page") ? "active" : "") treeview">
                         <a href="#">
                             <i class="fa fa-laptop"></i>

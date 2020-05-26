@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using OctopusCodesMultiVendor.Security;
 using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Models;
+using OctopusCodesMultiVendor.Helpers;
 
 namespace OctopusCodesMultiVendor.Areas.Admin.Controllers
 {
@@ -59,6 +60,10 @@ namespace OctopusCodesMultiVendor.Areas.Admin.Controllers
             {
                 var customer = ocmde.Accounts.SingleOrDefault(a => a.Id == id);
                 customer.Status = !customer.Status;
+                string status = customer.Status ? "Approved" : "Rejected";
+                string body = string.Format(ocmde.Settings.Find(27).Value, status);
+
+                EmailHelper.SendEmail(ocmde.Settings.Find(23).Value, customer.Email, ocmde.Settings.Find(26).Value, body, null);
                 ocmde.SaveChanges();
                 return RedirectToAction("Customer", "Account");
             }
@@ -74,6 +79,11 @@ namespace OctopusCodesMultiVendor.Areas.Admin.Controllers
             {
                 var vendor = ocmde.Vendors.SingleOrDefault(a => a.Id == id);
                 vendor.Status = !vendor.Status;
+
+                string status = vendor.Status?"Approved":"Rejected";
+                string body = string.Format(SettingsHelper.Acct_Status_Content, status);
+                
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, vendor.Email, SettingsHelper.Acct_Status_Subject, body, null);
                 ocmde.SaveChanges();
                 return RedirectToAction("Vendor", "Account");
             }

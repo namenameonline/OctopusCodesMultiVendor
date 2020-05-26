@@ -8,16 +8,35 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Configuration;
 using Stripe;
+using System.Web.Http;
+using System.Web.Routing;
+using System.Web.SessionState;
+using OctopusCodesMultiVendor.Helpers;
+
 namespace OctopusCodesMultiVendor
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        public override void Init()
+        {
+            this.PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            base.Init();
+        }
+        void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
+        {
+            System.Web.HttpContext.Current.SetSessionStateBehavior(
+                SessionStateBehavior.Required);
+        }
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             var secretKey = WebConfigurationManager.AppSettings["StripeSecretKey"];
             StripeConfiguration.ApiKey = secretKey;
+            SettingsHelper.Initialize(new Models.OctopusCodesMultiVendorsEntities());
+            
+
         }
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
@@ -36,7 +55,7 @@ namespace OctopusCodesMultiVendor
         }
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
-            var language = "en";
+            var language = "id-ID";
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
             Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
         }

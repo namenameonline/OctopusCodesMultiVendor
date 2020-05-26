@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "SendMessage";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@using OctopusCodesMultiVendor.Helpers
+@model OctopusCodesMultiVendor.Models.ViewModels.Messages.MessageDetailViewModel
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">Home</a> <span class="divider">/</span></li>
+    <li class="active">Send Messages</li>
+</ul>
+<h3>Send Messages</h3>
+<hr class="soft">
+@using (Html.BeginForm("SendMessage", "ContactUs", FormMethod.Post, new { @class = "form-inline" }))
+{
+    <fieldset>
+        @TempData["message"]
+        <div class="span8">
+            <div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table>
+                            @if (ViewBag.messages != null)
+                            {
+                                foreach (var message in ViewBag.messages)
+                                {
+                                    if (message.Sender != (int)SenderType.Admin)
+                                    {
+                                        <div class="chatcontainer darker">
+                                            <img src="~/Content/User/Images/@ViewBag.myphoto" alt="Avatar" class="right">
+                                            <p>@message.Body</p>
+                                            <span class="time-right">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="chatcontainer">
+                                            <img src="~/Content/User/Images/@ViewBag.senderphoto" alt="Avatar">
+                                            <p>@message.Body</p>
+                                            <span class="time-right">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                        </div>
+                                    }
+                                }
+                            }
+                            <div class="control-group">
+                                <label class="control-label" for="textarea">Content</label>
+                                <div class="controls">
+                                    @Html.TextAreaFor(model => model.Body, new { @class = "input-xxlarge", required = "required", rows = "3" })
+                                </div>
+                            </div>
+                        </table>
+                        @Html.HiddenFor(model => model.SendTo)
+                        @Html.HiddenFor(model => model.SenderType)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Send</button>
+}

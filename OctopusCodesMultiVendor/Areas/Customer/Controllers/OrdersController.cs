@@ -33,8 +33,18 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
             try
             {
                 var customer = (OctopusCodesMultiVendor.Models.Account)SessionPersister.account;
-                ViewBag.order = ocmde.Orders.Find(id);
-                if(ViewBag.order!=null)
+
+                var order = ocmde.Orders.Find(id);
+                var delivery = order.VendorPendingDeliveries.FirstOrDefault();
+                ViewBag.order = order;
+                ViewBag.deliveryfee = order.VendorPendingPayments.FirstOrDefault().DeliveryFee;
+                ViewBag.trackingId = delivery.TrackingId;
+                ViewBag.etd = delivery.EstimatedDeliveredDays;
+                ViewBag.std = delivery.StartDeliveryDate;
+                ViewBag.estdate = delivery.EstimatedDeliveredDate;
+                ViewBag.deliveryfee = order.VendorPendingPayments.FirstOrDefault().DeliveryFee;
+                ViewBag.orderStatus = ocmde.OrderStatus.Where(os => os.Status).ToList();
+                if (ViewBag.order!=null)
                 {
                     if(ViewBag.order.CustomerId!= customer.Id)
                     {

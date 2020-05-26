@@ -4,6 +4,7 @@
 }
 
 @using OctopusCodesMultiVendor.Models;
+@using OctopusCodesMultiVendor.Helpers;
 
 <section class="content">
     <div class="row">
@@ -49,7 +50,14 @@
                                                 <td>
                                                     <img src="~/Content/User/Images/@vendor.Logo" width="50" />
                                                 </td>
-                                                <td>@vendor.Address</td>
+                                                
+                                                <td>
+                                                    @foreach (var address in vendor.VendorAddresses)
+                                                    {
+                                                        @Html.Raw(
+                                                       @AddressHelper.GetFullAddress(address.LineAddress1, address.LineAddress2, address.City, address.ZipCode))
+                                                    }
+                                                </td>
                                                 <td>@vendor.Email</td>
                                                 <td>@vendor.Phone</td>
                                                 <td>

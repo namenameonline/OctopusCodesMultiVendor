@@ -34,6 +34,11 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                 }
                 else
                 {
+                    if(!vendor.Status)
+                    {
+                        ViewBag.error = Resources.Customer.Pending_Account;
+                        return View("Index");
+                    }    
                     SessionPersister.account = vendor;
                     return RedirectToAction("Index", "Category");
                 }
@@ -65,6 +70,7 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
             {
                 var vendor = (OctopusCodesMultiVendor.Models.Vendor)SessionPersister.account;
                 vendor.defaultAddress = vendor.VendorAddresses.FirstOrDefault();
+                vendor.vendorPaymentInfo = vendor.VendorPaymentInfoes.FirstOrDefault();
                 return View("Profile", vendor);
             }
             catch (Exception e)
@@ -132,6 +138,21 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                         acctAddressOriginal.City = vendor.defaultAddress.City;
                         acctAddressOriginal.ZipCode = vendor.defaultAddress.ZipCode;
                     }
+                    if (currentVendor.VendorPaymentInfoes.Count <= 0)
+                    {
+                        VendorPaymentInfo paymentInfo = vendor.vendorPaymentInfo;
+                        paymentInfo.CreditCardNo = vendor.vendorPaymentInfo.CreditCardNo;
+                        paymentInfo.ExpiryDate = vendor.vendorPaymentInfo.ExpiryDate;
+                        paymentInfo.FullName = vendor.vendorPaymentInfo.FullName;
+                        currentVendor.VendorPaymentInfoes.Add(paymentInfo);
+                    }
+                    else
+                    {
+                        VendorPaymentInfo acctPaymentOriginal = currentVendor.VendorPaymentInfoes.FirstOrDefault();
+                        acctPaymentOriginal.CreditCardNo = vendor.vendorPaymentInfo.CreditCardNo;
+                        acctPaymentOriginal.ExpiryDate = vendor.vendorPaymentInfo.ExpiryDate;
+                        acctPaymentOriginal.FullName = vendor.vendorPaymentInfo.FullName;
+                    }
                     ocmde.SaveChanges();
                     SessionPersister.account = ocmde.Vendors.Find(vendor.Id);
                     return RedirectToAction("Profile", "Login");
@@ -167,7 +188,8 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                 if (vendor != null)
                 {
                     if (BCrypt.Net.BCrypt.Verify(password, vendor.Password) && vendor.Status && VendorHelper.checkExpires(vendor.Id))
-                    {
+                    {                        
+
                         return vendor;
                     }
                 }

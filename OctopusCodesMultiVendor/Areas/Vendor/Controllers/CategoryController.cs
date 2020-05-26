@@ -1,5 +1,6 @@
 ﻿using OctopusCodesMultiVendor.Models;
 using OctopusCodesMultiVendor.Models.ViewModels;
+using OctopusCodesMultiVendor.Models.ViewModels.Products;
 using OctopusCodesMultiVendor.Security;
 using System;
 using System.Collections.Generic;

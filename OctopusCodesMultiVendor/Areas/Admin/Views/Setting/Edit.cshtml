@@ -47,11 +47,13 @@
                         else if (Model.TypeOfControl.Equals("textarea"))
                         {
                             <div class="form-group">
-                                <label for="value">
-                                    Value
+                                <label for="description">
+                                    Content
                                 </label>
-                                <input type="file" name="logo" accept="image/*" />
+                                @Html.TextAreaFor(model => model.Value, new { @class = "form-control", placeholder = "Value" })
+                                @Html.ValidationMessageFor(model => model.Value)
                             </div>
+                            
                         }
                         else if (Model.TypeOfControl.Equals("file"))
                         {

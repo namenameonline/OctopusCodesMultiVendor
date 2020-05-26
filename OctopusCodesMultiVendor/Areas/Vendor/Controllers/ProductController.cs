@@ -7,6 +7,7 @@ using OctopusCodesMultiVendor.Security;
 using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Models;
 using System.IO;
+using OctopusCodesMultiVendor.Models.ViewModels.Products;
 
 namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
 {

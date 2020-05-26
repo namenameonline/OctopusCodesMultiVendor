@@ -35,7 +35,7 @@
             <b>Order ID:</b> @ViewBag.order.Id<br>
             <b>Payment Due:</b> @ViewBag.order.DateCreation.ToString("MM/dd/yyyy")<br>
             <b>Order Status:</b> @ViewBag.order.OrderStatu.Name<br>
-            <b>Payment:</b> @(ViewBag.order.Payment != null ? ViewBag.order.Payment.Name : "")
+            <b>Payment Reference:</b> @ViewBag.order.PaymentReference
         </div>
         <!-- /.col -->
     </div>
@@ -63,20 +63,27 @@
                         Product pr = (Product)orderDetail.Product;
                         Photo mainPhoto = pr.Photos.SingleOrDefault(p => p.Main == true);
                         s += orderDetail.Price * @orderDetail.Quantity;
-                    <tr>
-                        <td>@orderDetail.Product.Id</td>
-                        <td>@orderDetail.Product.Name</td>
-                        <td><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" width="80" /></td>
-                        <td>@orderDetail.Price.ToString("c")</td>
-                        <td>@orderDetail.Quantity</td>
-                        <td>@((orderDetail.Price * @orderDetail.Quantity).ToString("c"))</td>
-                    </tr>
+                        <tr>
+                            <td>@orderDetail.Product.Id</td>
+                            <td>@orderDetail.Product.Name</td>
+                            <td><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" width="80" /></td>
+                            <td>@orderDetail.Price.ToString("c")</td>
+                            <td>@orderDetail.Quantity</td>
+                            <td>@((orderDetail.Price * @orderDetail.Quantity).ToString("c"))</td>
+                        </tr>
                     }
+                    <tr>
+                        <td colspan="5">Delivery Fee:</td>
+                        <td>@ViewBag.deliveryfee.ToString("c")</td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5" align="right">Total</td>
-                        <td>@s.ToString("c")</td>
+                        <td>@{
+                            decimal total = s + ViewBag.deliveryFee;
+                        } 
+                        @total.ToString("c")</td>
                     </tr>
                 </tfoot>
             </table>
@@ -88,7 +95,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h2 class="page-header">
-                <i class="fa fa-globe"></i> Update Order Status
+                <i class="fa fa-globe"></i> Update Delivery Status
             </h2>
         </div>
         <!-- /.col -->
@@ -98,49 +105,68 @@
         <div class="col-sm-4 invoice-col">
             <form method="post" action="@Url.Action("Update", "Orders")">
                 <div class="box-body">
+                    
+                    <div class="form-group">
+                        <label for="parent">
+                            Estimated days:
+                        </label>
 
-                    <div class="form-group">
-                        <label for="parent">
-                            Payment: 
-                        </label>
-                        @if (ViewBag.order.PaymentId == null)
-                        {
-                            <select name="payment">
-                                <option value="-1">Select a Payment</option>
-                                @foreach (var payment in ViewBag.payments)
-                                {
-                                    <option value="@payment.Id">@payment.Name</option>
-                                }
-                            </select>
-                        }
-                        else
-                        {
-                            @ViewBag.order.Payment.Name
-                        }
+                        @ViewBag.etd
+
                     </div>
-                
                     <div class="form-group">
                         <label for="parent">
-                            Order Status: 
+                            Start delivery date:
                         </label>
-                        @if (ViewBag.order.OrderStatusId == 1)
-                        {
-                            <select name="orderStatus">
-                                @foreach (var orderStatus in ViewBag.orderStatus)
+
+                        @ViewBag.std
+
+                    </div>
+                    <div class="form-group">
+                        <label for="parent">
+                            Order Status:
+                        </label>
+                        
+                        <select name="orderStatus">
+                            @foreach (var orderStatus in ViewBag.orderStatus)
+                            {
+
+                                int statusId = -1;
+                                if (ViewBag.order.OrderStatu != null)
+                                {
+                                    statusId = ViewBag.order.OrderStatu.Id;
+                                    if (statusId == orderStatus.Id)
+                                    {
+                                        <option value="@orderStatus.Id" selected>@orderStatus.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@orderStatus.Id">@orderStatus.Name</option>
+                                    }
+                                }
+                                else
                                 {
                                     <option value="@orderStatus.Id">@orderStatus.Name</option>
                                 }
-                            </select>
-                        }
-                        else
-                        {
-                            
-                            @ViewBag.order.OrderStatu.Name
-                        }
+                            }
+                        </select>
+                       
                     </div>
+                    <div class="form-group">
+                        <label for="parent">
+                            Tracking ID:
+                        </label>
+                        <input type="text" name="trackingId" value="@ViewBag.trackingId" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="parent">
+                        Estimated Delivered Date:
+                    </label>
+
+                    @ViewBag.estdate
 
                 </div>
-                
                 @if (ViewBag.order.PaymentId == null || ViewBag.order.OrderStatusId == 1)
                 {
                     <div class="box-footer">

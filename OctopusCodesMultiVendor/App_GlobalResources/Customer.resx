@@ -138,6 +138,9 @@
   <data name="Email" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="Email_already_exists" xml:space="preserve">
+    <value>Email already exists</value>
+  </data>
   <data name="Full_Name" xml:space="preserve">
     <value>Full Name</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="Password_validate_message" xml:space="preserve">
     <value>Password have 6 to 20 characters string with at least one digit, one upper case letter, one lower case letter and one special symbol @, #, $, %</value>
+  </data>
+  <data name="Pending_Account" xml:space="preserve">
+    <value>Account is pending review</value>
   </data>
   <data name="Phone" xml:space="preserve">
     <value>Phone</value>

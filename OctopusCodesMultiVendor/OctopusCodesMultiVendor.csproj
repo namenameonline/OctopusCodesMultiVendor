@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OctopusCodesMultiVendor</RootNamespace>
     <AssemblyName>OctopusCodesMultiVendor</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>44338</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
@@ -23,6 +23,7 @@
     <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +47,9 @@
       <HintPath>..\packages\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -54,9 +58,33 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MailKit, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
+      <HintPath>..\packages\MailKit.2.6.0\lib\net45\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeKit.2.6.0\lib\net45\MimeKit.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
@@ -71,6 +99,18 @@
     </Reference>
     <Reference Include="Stripe.net, Version=36.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Stripe.net.36.8.0\lib\net45\Stripe.net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.4.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Common, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.Common.4.3.0\lib\net451\System.Data.Common.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.SqlClient, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.3.0\lib\net46\System.Data.SqlClient.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -87,16 +127,23 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TableDependency.SqlClient, Version=8.5.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SqlTableDependency.8.5.8\lib\net451\TableDependency.SqlClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
@@ -1097,6 +1144,7 @@
     <Content Include="Content\User\themes\css\ajaxloading.css" />
     <Content Include="Content\User\themes\css\base.css" />
     <Content Include="Content\User\themes\css\bootstrap-responsive.min.css" />
+    <Content Include="Content\User\themes\css\chat.css" />
     <Content Include="Content\User\themes\css\font-awesome-ie7.css" />
     <Content Include="Content\User\themes\css\font-awesome.css" />
     <Content Include="Content\User\themes\cyborg\bootstrap.min.css" />
@@ -1155,6 +1203,7 @@
     <Content Include="Content\User\themes\img\glyphicons-halflings-white.png" />
     <Content Include="Content\User\themes\img\glyphicons-halflings.png" />
     <Content Include="Content\User\themes\journal\bootstrap.min.css" />
+    <Content Include="Content\User\themes\js\accountingjs-setup.js" />
     <Content Include="Content\User\themes\js\bootshop.js" />
     <Content Include="Content\User\themes\js\bootstrap.min.js" />
     <Content Include="Content\User\themes\js\ajaxloading.js" />
@@ -1213,6 +1262,13 @@
     <Content Include="Content\User\themes\switch\themeswitch.css" />
     <Content Include="Content\User\themes\united\bootstrap.min.css" />
     <Content Include="Global.asax" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="test.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1290,17 +1346,20 @@
       <DependentUpon>Vendor.en.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\MemberShipController.cs" />
     <Compile Include="Areas\Admin\Controllers\CategoryController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Admin\Controllers\MessageController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrdersController.cs" />
     <Compile Include="Areas\Admin\Controllers\RajaOngkirController.cs" />
     <Compile Include="Areas\Admin\Controllers\SettingController.cs" />
     <Compile Include="Areas\Admin\Controllers\PageController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProductController.cs" />
     <Compile Include="Areas\Customer\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Customer\Controllers\MessageController.cs" />
     <Compile Include="Areas\Customer\Controllers\OrdersController.cs" />
     <Compile Include="Areas\Customer\CustomerAreaRegistration.cs" />
     <Compile Include="Areas\Vendor\Controllers\MemberShipController.cs" />
@@ -1312,6 +1371,8 @@
     <Compile Include="Areas\Vendor\Controllers\LoginController.cs" />
     <Compile Include="Areas\Vendor\Controllers\ProductController.cs" />
     <Compile Include="Areas\Vendor\VendorAreaRegistration.cs" />
+    <Compile Include="Controllers\CartApiController.cs" />
+    <Compile Include="Controllers\ContactUsController.cs" />
     <Compile Include="Controllers\PageController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -1321,15 +1382,25 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AddressHelper.cs" />
+    <Compile Include="Helpers\DeliveryHelper.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
+    <Compile Include="Helpers\EncryptHelper.cs" />
+    <Compile Include="Helpers\EnumType.cs" />
+    <Compile Include="Helpers\Interface\MessageEvents.cs" />
     <Compile Include="Helpers\MemberShipHelper.cs" />
+    <Compile Include="Helpers\MessageEventListener.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\HttpUrlHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\VendorHelper.cs" />
     <Compile Include="Models\Account.cs">
       <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountAddress.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountPaymentInfo.cs">
       <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Category.cs">
@@ -1345,6 +1416,15 @@
       <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Message.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessageDetail.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessageHeader.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MessageSenderType.cs">
       <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Order.cs">
@@ -1411,21 +1491,30 @@
     <Compile Include="Models\MemberShipMetaData.cs" />
     <Compile Include="Models\CategoryMetaData.cs" />
     <Compile Include="Models\AccountMetaData.cs" />
+    <Compile Include="Models\VendorPaymentInfo.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VendorPendingDelivery.cs">
+      <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\VendorPendingPayment.cs">
       <DependentUpon>ModelOctopusCodesMultiVendors.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ViewModels\CartViewModel.cs" />
-    <Compile Include="Models\ViewModels\ForgetPasswordViewModel.cs" />
+    <Compile Include="Models\ViewModels\Cart\CartViewModel.cs" />
+    <Compile Include="Models\ViewModels\Login\ForgetPasswordViewModel.cs" />
     <Compile Include="Models\ViewModels\Json\Cost\RajaOngkirCostJson.cs" />
     <Compile Include="Models\ViewModels\Json\DeliveryOptionJson.cs" />
-    <Compile Include="Models\ViewModels\ProductViewModel.cs" />
-    <Compile Include="Models\ViewModels\CategoryViewModel.cs" />
+    <Compile Include="Models\ViewModels\Messages\MessageDetailViewModel.cs" />
+    <Compile Include="Models\ViewModels\Messages\MessageListViewModel.cs" />
+    <Compile Include="Models\ViewModels\Products\ProductViewModel.cs" />
+    <Compile Include="Models\ViewModels\Products\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModels\Json\RajaOngkirJson.cs" />
-    <Compile Include="Models\ViewModels\ResetPasswordModel.cs" />
+    <Compile Include="Models\ViewModels\Login\ResetPasswordModel.cs" />
     <Compile Include="Paypal\PDTHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\CustomAuthorizeAttribute.cs" />
     <Compile Include="Security\SessionPersister.cs" />
+    <Compile Include="SignalR\MessageHub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -1760,6 +1849,16 @@
     <Content Include="Views\Customers\Reset.cshtml" />
     <Content Include="Areas\Admin\Views\RajaOngkir\Index.cshtml" />
     <Content Include="Views\Cart\MakePayment.cshtml" />
+    <Content Include="Views\Vendors\RegisterSuccess.cshtml" />
+    <Content Include="Views\Customers\RegisterSuccess.cshtml" />
+    <Content Include="Areas\Vendor\Views\Message\Detail.cshtml" />
+    <Content Include="Areas\Customer\Views\Message\Index.cshtml" />
+    <Content Include="Areas\Customer\Views\Message\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Message\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Message\Detail.cshtml" />
+    <Content Include="Views\ContactUs\SendMessage.cshtml" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1773,7 +1872,6 @@
     <Folder Include="Areas\Customer\Models\" />
     <Folder Include="Areas\Vendor\Models\" />
     <Folder Include="Content\User\themes\less\oregional\" />
-    <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

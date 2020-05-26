@@ -12,12 +12,18 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
     public class LoginController : Controller
     {
         private OctopusCodesMultiVendorsEntities ocmde = new OctopusCodesMultiVendorsEntities();
-
+        
         public ActionResult Index()
         {
+            ViewBag.redirectUrl = "";
             return View();
         }
-
+        [HttpGet]
+        public ActionResult Index(string redirectUrl)
+        {
+            ViewBag.redirectUrl = redirectUrl;
+            return View();
+        }
         [HttpPost]
         public ActionResult Process(FormCollection fc)
         {
@@ -25,6 +31,7 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
             {
                 string username = fc["username"];
                 string password = fc["password"];
+                string redirectUrl = fc["redirectUrl"];
                 var account = login(username, password);
                 if (account == null)
                 {
@@ -33,8 +40,16 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 }
                 else
                 {
+                    if (!account.Status)
+                    {
+                        ViewBag.error = Resources.Customer.Pending_Account;
+                        return View("Index");
+                    }
                     SessionPersister.account = account;
-                    return RedirectToAction("Index", "Orders");
+                    if (string.IsNullOrEmpty(redirectUrl))
+                        return RedirectToAction("Index", "Orders");
+                    else
+                        return Redirect(redirectUrl);
                 }
             }
             catch (Exception e)
@@ -64,6 +79,7 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
             {
                 var account = (Account)SessionPersister.account;
                 account.defaultAddress = account.AccountAddresses.FirstOrDefault();
+                account.accountPaymentInfo = account.AccountPaymentInfoes.FirstOrDefault();
                 return View("Profile", account);
             }
             catch (Exception e)
@@ -109,7 +125,7 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                     if(currentAccount.AccountAddresses.Count<=0)
                     {
                         AccountAddress acctAddress = account.defaultAddress;
-                        acctAddress.Id = Guid.NewGuid();
+                        acctAddress.Id = Guid.NewGuid();                       
                         currentAccount.AccountAddresses.Add(acctAddress);
                     }
                     else
@@ -121,13 +137,22 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                         forUpdate.LineAddress2 = account.defaultAddress.LineAddress2;
                         forUpdate.ZipCode = account.defaultAddress.ZipCode;
 
-                        //acctAddressOriginal = account.defaultAddress;
-                        /*account.defaultAddress.Id=acctAddressOriginal.Id;
-                        acctAddressOriginal = account.defaultAddress;
-                        currentAccount.AccountAddresses.Remove(acctAddressOriginal);
-                        currentAccount.AccountAddresses.Add(account.defaultAddress);
-                        */
-
+                    }
+                    if (currentAccount.AccountPaymentInfoes.Count <= 0)
+                    {
+                        AccountPaymentInfo paymentInfo = new AccountPaymentInfo();
+                        paymentInfo.CreditCardNo = account.accountPaymentInfo.CreditCardNo;
+                        paymentInfo.ExpiryDate = account.accountPaymentInfo.ExpiryDate;
+                        paymentInfo.FullName = account.accountPaymentInfo.FullName;
+                        //paymentInfo.Id = Guid.NewGuid();
+                        currentAccount.AccountPaymentInfoes.Add(paymentInfo);
+                    }
+                    else
+                    {
+                        AccountPaymentInfo acctPaymentOriginal = currentAccount.AccountPaymentInfoes.FirstOrDefault();
+                        acctPaymentOriginal.CreditCardNo = account.accountPaymentInfo.CreditCardNo;
+                        acctPaymentOriginal.ExpiryDate = account.accountPaymentInfo.ExpiryDate;
+                        acctPaymentOriginal.FullName = account.accountPaymentInfo.FullName;
                     }
                     ocmde.SaveChanges();
                     SessionPersister.account = ocmde.Accounts.Find(account.Id);

@@ -1,4 +1,5 @@
-﻿using OctopusCodesMultiVendor.Models;
+﻿using OctopusCodesMultiVendor.Helpers;
+using OctopusCodesMultiVendor.Models;
 using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Security;
 using System;
@@ -34,9 +35,16 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
             try
             {
                 var vendor = (OctopusCodesMultiVendor.Models.Vendor)SessionPersister.account;
-                ViewBag.order = ocmde.Orders.Find(id);
+                var order= ocmde.Orders.Find(id);
+                var delivery = order.VendorPendingDeliveries.FirstOrDefault();
+                ViewBag.order = order;
                 ViewBag.orderId = id;
+                ViewBag.trackingId = delivery.TrackingId;
                 ViewBag.payments = ocmde.Payments.Where(p => p.Status).ToList();
+                ViewBag.etd = delivery.EstimatedDeliveredDays;
+                ViewBag.std = delivery.StartDeliveryDate;
+                ViewBag.estdate = delivery.EstimatedDeliveredDate;
+                ViewBag.deliveryfee = order.VendorPendingPayments.FirstOrDefault().DeliveryFee;
                 ViewBag.orderStatus = ocmde.OrderStatus.Where(os => os.Status).ToList();
                 if (ViewBag.order != null)
                 {
@@ -71,13 +79,23 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
         public ActionResult Update(FormCollection fc)
         {
             int id = int.Parse(fc["id"]);
-            int paymentId = int.Parse(fc["payment"]);
-            int orderStatusId = int.Parse(fc["orderStatus"]);
+            var vendor = (OctopusCodesMultiVendor.Models.Vendor)SessionPersister.account;
             var order = ocmde.Orders.Find(id);
-            order.PaymentId = paymentId;
+            if (order.VendorId != vendor.Id)
+                return View("Error");
+            
+            //int paymentId = int.Parse(fc["payment"]);
+            int orderStatusId = int.Parse(fc["orderStatus"]);
+            string trackingId = fc["trackingId"];
+            
+            var vendorPendingDelivery = order.VendorPendingDeliveries.FirstOrDefault();
+            vendorPendingDelivery.StartDeliveryDate = DateTime.Now;
+            vendorPendingDelivery.EstimatedDeliveredDate = DateTime.Now.AddDays(DeliveryHelper.GetLatestDays(vendorPendingDelivery.EstimatedDeliveredDays));
+            vendorPendingDelivery.TrackingId = trackingId;
+            //order.PaymentId = ocmde;
             order.OrderStatusId = orderStatusId;
             ocmde.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Detail", new { id = order.Id });
         }
 
     }

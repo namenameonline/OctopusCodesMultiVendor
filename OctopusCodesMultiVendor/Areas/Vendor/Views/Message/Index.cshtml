@@ -24,28 +24,40 @@
                             <div class="col-sm-12">
                                 <table id="example1"
                                        class="table table-bordered table-striped dataTable">
-                                    @*<thead>
-            <tr role="row">
-                <th class="no-sort">Id</th>
-                <th class="no-sort">Title</th>
-                <th class="no-sort">Content</th>
-                <th>Date Creation</th>
-                <th>Customer Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var message in ViewBag.messages)
-            {
-                <tr>
-                    <td>@message.Id</td>
-                    <td>@message.Title</td>
-                    <td>@message.Body</td>
-                    <td>@message.DateCreation.ToString("MM/dd/yyyy")</td>
-                    <td>@message.Account.FullName</td>
 
-                </tr>
-            }
-        </tbody>*@
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="no-sort">Account</th>
+                                            <th class="no-sort">Last Message</th>
+                                            <th class="no-sort">Last Updated</th>
+                                            <th class="no-sort">View Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var message in ViewBag.messages)
+                                        {
+                                        <tr>
+                                            <td>
+                                                @{
+                                                    if (message.Account != null)
+                                                    {                                                       
+                                                        @Html.Raw(message.Account.FullName);
+                                                    }
+                                                    else if (message.Account1 != null)
+                                                    {
+                                                        @Html.Raw(message.Account1.FullName);
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@message.LastMessage</td>
+                                            <td>@message.LastUpdated.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                            <th class="no-sort">
+                                            <a href="@Url.Action("Detail",new { Id=message.MsgId })">Details</a>
+                                                
+                                            </th>
+                                        </tr>
+                                        }
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

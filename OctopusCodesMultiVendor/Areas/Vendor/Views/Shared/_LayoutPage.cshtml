@@ -45,7 +45,7 @@
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="~/Content/Admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
     <link rel="stylesheet" href="~/Content/Admin/plugins/datatables/dataTables.bootstrap.css">
-
+    <link rel="stylesheet" href="~/Content/User/themes/css/chat.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
@@ -65,7 +65,11 @@
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-
+                        <li class="user user-menu">
+                            <a href="/ContactUs/SendMessage">
+                                <span class="hidden-xs">Contact Us</span>
+                            </a>
+                        </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -265,8 +269,10 @@
     <script src="~/Content/Admin/tinymce/js/tinymce/jquery.tinymce.min.js"></script>
     <script>
 tinymce.init({
-    selector: 'textarea',
+    mode: "specific_textareas",
     theme: 'modern',
+    editor_deselector: "mceNoEditor",
+    editor_selector: "mceEditor",
     plugins: [
       'advlist autolink lists link image charmap print preview hr anchor pagebreak',
       'searchreplace wordcount visualblocks visualchars code fullscreen',
@@ -286,6 +292,7 @@ tinymce.init({
     ],
     valid_elements: '*[*]'
 });
+        
     </script>
 
 
