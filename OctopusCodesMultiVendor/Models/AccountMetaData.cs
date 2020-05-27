@@ -24,6 +24,7 @@ namespace OctopusCodesMultiVendor.Models
     public partial class Account
     {
         public AccountAddress defaultAddress { get; set; }
+        public AccountPaymentInfo accountPaymentInfo { get; set; }
     }
 
 }

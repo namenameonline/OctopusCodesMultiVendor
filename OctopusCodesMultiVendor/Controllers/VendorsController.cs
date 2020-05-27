@@ -9,6 +9,9 @@ using OctopusCodesMultiVendor.Security;
 using System.IO;
 using OctopusCodesMultiVendor.Paypal;
 using OctopusCodesMultiVendor.Helpers;
+using System.Data.Entity.Core.Metadata.Edm;
+using OctopusCodesMultiVendor.Models.ViewModels;
+using OctopusCodesMultiVendor.Models.ViewModels.Messages;
 
 namespace OctopusCodesMultiVendor.Controllers
 {
@@ -37,7 +40,7 @@ namespace OctopusCodesMultiVendor.Controllers
                     PagedList<Product> model = new PagedList<Product>(listProducts, page, pageSize);
                     ViewBag.vendor = vendor;
                     VendorAddress vendorAddress = vendor.VendorAddresses.FirstOrDefault();
-                    ViewBag.Address = vendorAddress.LineAddress1 + "<br/>" + vendorAddress.LineAddress2 + "<br/>" + vendorAddress.City + "<br/>" + vendorAddress.ZipCode;
+                    ViewBag.Address = AddressHelper.GetFullAddress( vendorAddress.LineAddress1, vendorAddress.LineAddress2 ,vendorAddress.City ,vendorAddress.ZipCode);
                     ViewBag.comments = vendor.Reviews.Where(r => r.VendorId == id).OrderByDescending(r => r.Id).ToList();
                     return View("Index", model);
                 }
@@ -61,12 +64,25 @@ namespace OctopusCodesMultiVendor.Controllers
                 {
                     if (SessionPersister.account == null)
                     {
-                        return RedirectToAction("Login", "Customer");
+
+                        return RedirectToAction("Login", "Customer", new { redirectUrl = "/Vendors/SendMessage/" + id });
                     }
                     else
                     {
-                        ViewBag.vendor = ocmde.Vendors.Find(id);
-                        return View("SendMessage", new Message() { VendorId = id });
+                        var vendor = ocmde.Vendors.Find(id);
+                        ViewBag.vendor = vendor;
+                        var customer = (OctopusCodesMultiVendor.Models.Account)SessionPersister.account;
+                        var messageHeader = ocmde.MessageHeaders.Where(m => m.CustomerId == customer.Id && m.VendorId==vendor.Id).FirstOrDefault();
+                        if (messageHeader != null)
+                        {
+                            if (messageHeader.VendorId != vendor.Id)
+                                return View("Error", new HandleErrorInfo(new Exception("Invalid access"), "Vendors", "SendMessage"));
+
+                            ViewBag.messages = messageHeader.MessageDetails.OrderBy(a => a.DateCreation);
+                        }
+                        ViewBag.senderphoto = "no-logo.jpg";
+                        ViewBag.myphoto = vendor.Logo;
+                        return View("SendMessage", new MessageDetailViewModel() { SendTo = id });
                     }
                 }
             }
@@ -77,16 +93,40 @@ namespace OctopusCodesMultiVendor.Controllers
         }
 
         [HttpPost]
-        public ActionResult SendMessage(Message message)
+        public ActionResult SendMessage(MessageDetailViewModel message)
         {
             try
             {
                 var customer = (OctopusCodesMultiVendor.Models.Account)SessionPersister.account;
-                message.CustomerId = customer.Id;
-                message.DateCreation = DateTime.Now;
-                message.Status = false;
-                ocmde.Messages.Add(message);
+                MessageHeader mh = ocmde.MessageHeaders.FirstOrDefault(a => a.CustomerId == customer.Id&&a.VendorId==message.SendTo);
+                bool newconversation = false;
+                if(mh==null)
+                {
+                    mh = new MessageHeader();
+                    newconversation = true;
+                    mh.MsgId = Guid.NewGuid();
+                    mh.VendorId =message.SendTo;
+                    mh.CustomerId = customer.Id;
+                    mh.SenderType = (int)SenderType.Customer;
+                }
+                mh.LastMessage = message.Body;
+                mh.LastUpdated = DateTime.Now;
+                MessageDetail messageDetail = new MessageDetail();
+                messageDetail.Id = Guid.NewGuid();
+                messageDetail.DateCreation = DateTime.Now;
+                messageDetail.Body = message.Body;
+                messageDetail.Status = true;
+                messageDetail.Sender = (int)SenderType.Customer;
+                mh.MessageDetails.Add(messageDetail);
+                if(newconversation)
+                    ocmde.MessageHeaders.Add(mh);
                 ocmde.SaveChanges();
+                string body =string.Format(SettingsHelper.Cust_SendMsg_Content,customer.FullName,message.Body,
+                    EncryptHelper.EncryptString(SettingsHelper.Encryption_Key, mh.VendorId.ToString())
+                   
+                    );
+                string vendorEmail = ocmde.Vendors.Find(mh.VendorId).Email;
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, vendorEmail, SettingsHelper.Cust_SendMsg_Subject, body, null);
                 TempData["message"] = Resources.Vendor.messages_sent_success;
                 return RedirectToAction("SendMessage");
             }
@@ -204,6 +244,7 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
+                ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                 return View("Register", new Vendor());
             }
             catch (Exception e)
@@ -236,7 +277,7 @@ namespace OctopusCodesMultiVendor.Controllers
                 if (ModelState.IsValid)
                 {
                     vendor.Password = BCrypt.Net.BCrypt.HashPassword(vendor.Password);
-                    vendor.Status = true;
+                    vendor.Status = false;
                     if (logo != null && logo.ContentLength > 0 && logo.ContentType.Contains("image"))
                     {
                         var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetFileName(logo.FileName);
@@ -263,11 +304,14 @@ namespace OctopusCodesMultiVendor.Controllers
                         EndDate = DateTime.Now.AddMonths(membership.Month)
                     };
                     ocmde.MemberShipVendors.Add(memberShipVendor);
-                    ocmde.SaveChanges();
+                    string body = "There is a new vendor request. Please login to admin to take action";
 
+                    EmailHelper.SendEmail(SettingsHelper.Email_Sender, SettingsHelper.Admin_Email, "New Vendor Request", body, null);
                     ocmde.SaveChanges();
-                    return RedirectToAction("Index", "Login", new { Area = "Vendor" });
+                    return View("RegisterSuccess");
+                    //return RedirectToAction("Index", "Login", new { Area = "Vendor" });
                 }
+                ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                 return View("Register", vendor);
             }
             catch (Exception e)

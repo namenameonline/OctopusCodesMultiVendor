@@ -1,6 +1,7 @@
 ﻿using OctopusCodesMultiVendor.Helpers;
 using OctopusCodesMultiVendor.Models;
 using OctopusCodesMultiVendor.Models.ViewModels;
+using OctopusCodesMultiVendor.Models.ViewModels.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
+                ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b=>b.city_name).Select(a => a.city_name);
                 return View("Register", new Account());
             }
             catch (Exception e)
@@ -66,7 +68,7 @@ namespace OctopusCodesMultiVendor.Controllers
                 ocmde.ForgetPasswords.Remove(fp);
                 ocmde.SaveChanges();
                 ViewBag.infoMessage = "You have successfully reset your password";
-                return View("Login", "Customers");
+                return View("Login", "Customer");
             }
             catch (Exception e)
             {
@@ -91,18 +93,9 @@ namespace OctopusCodesMultiVendor.Controllers
             try
             {
                 string email = "";
-                if(!string.IsNullOrEmpty(account.Username))
+                if (!string.IsNullOrEmpty(account.Email))
                 {
-                    email = ExistsAccount(account.Username);
-                    if (string.IsNullOrEmpty(email))
-                    {
-                        ViewBag.errorMessage = "Invalid Account";
-                        return View("Forget", account);
-                    }
-                }
-                else if (string.IsNullOrEmpty(account.Email))
-                {
-                    email = ExistsEmail(account.Username);
+                    email = ExistsEmail(account.Email);
                     if (string.IsNullOrEmpty(email))
                     {
                         ViewBag.errorMessage = "Invalid Account";
@@ -110,10 +103,19 @@ namespace OctopusCodesMultiVendor.Controllers
                     }
                 }
                 
-                string body = "Go to the following link to reset your password:<br>Click <a href=" + HttpUrlHelper.GetBaseURL(Request,Url)+">here</a>";
+                Account dbAccount = ocmde.Accounts.FirstOrDefault(a => a.Email.Equals(email));
+                ocmde.ForgetPasswords.RemoveRange(ocmde.ForgetPasswords.Where(a => a.Username.Equals(dbAccount.Username)));
+                ForgetPassword forgetPassword = new ForgetPassword();
+                forgetPassword.Id = Guid.NewGuid();
+                forgetPassword.Username = dbAccount.Username;
+                ocmde.ForgetPasswords.Add(forgetPassword);
+                ocmde.SaveChanges();
+                string body = string.Format(SettingsHelper.Forget_Pwd_Content, SettingsHelper.BASE_URL + "/Customers/Reset/" + forgetPassword.Id.ToString());
+                //string body = string.Format(ocmde.Settings.Find(22).Value, "/Customer/Reset/" + forgetPassword.Id.ToString()); ;
                 //TODO:
                 //Send email to the account for reset
-                EmailHelper.SendEmail("admin@toko.com", account.Email, "Forget Password", body, null);
+
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, account.Email,SettingsHelper.Forget_Pwd_Subject, body, null);
                 ViewBag.infoMessage = "Please check your email for the password reset link";
                 return View("Forget", account);
             }
@@ -133,6 +135,10 @@ namespace OctopusCodesMultiVendor.Controllers
                     {
                         ModelState.AddModelError("username", Resources.Vendor.Username_already_exists);
                     }
+                    if (!string.IsNullOrEmpty(ExistsEmail(account.Email)))
+                    {
+                        ModelState.AddModelError("email", Resources.Vendor.Email_already_exists);
+                    }
                 }
 
                 if (account.Password != null && account.Password.Length != 0 && !PasswordHelper.IsValidPassword(account.Password))
@@ -143,14 +149,24 @@ namespace OctopusCodesMultiVendor.Controllers
                 if (ModelState.IsValid)
                 {
                     account.IsAdmin = false;
-                    account.Status = true;
+                    account.Status = false;
                     account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
+                    AccountAddress accountAddress = account.defaultAddress;
+                    accountAddress.Id = Guid.NewGuid();
+                    account.AccountAddresses.Add(accountAddress);                   
+
                     ocmde.Accounts.Add(account);
+
+                    string body = "There is a new customer request. Please login to admin to take action";
+
+                    EmailHelper.SendEmail(SettingsHelper.Email_Sender,SettingsHelper.Admin_Email,"New Customer Request", body, null);
                     ocmde.SaveChanges();
-                    return RedirectToAction("Index", "Login", new { Area = "Customer" });
+                    //return RedirectToAction("Index", "Login", new { Area = "Customer" });
+                    return View("RegisterSuccess");
                 }
                 else
                 {
+                    ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                     return View("Register",account);
                 }
             }
@@ -165,7 +181,13 @@ namespace OctopusCodesMultiVendor.Controllers
         }
         private string ExistsEmail(string email)
         {
-            return ocmde.Accounts.FirstOrDefault(a => a.Email.Equals(email)).Email;
+            
+            Account acct = ocmde.Accounts.FirstOrDefault(a => a.Email.Equals(email));
+            if(acct!=null)
+               return acct.Email;
+            
+            return "";
+            
         }
         private bool Exists(string username)
         {

@@ -25,6 +25,9 @@ namespace OctopusCodesMultiVendor.Models
             this.Reviews = new HashSet<Review>();
             this.VendorAddresses = new HashSet<VendorAddress>();
             this.VendorPendingPayments = new HashSet<VendorPendingPayment>();
+            this.VendorPaymentInfoes = new HashSet<VendorPaymentInfo>();
+            this.VendorPendingDeliveries = new HashSet<VendorPendingDelivery>();
+            this.MessageHeaders = new HashSet<MessageHeader>();
         }
     
         public int Id { get; set; }
@@ -52,5 +55,11 @@ namespace OctopusCodesMultiVendor.Models
         public virtual ICollection<VendorAddress> VendorAddresses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VendorPendingPayment> VendorPendingPayments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VendorPaymentInfo> VendorPaymentInfoes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MessageHeader> MessageHeaders { get; set; }
     }
 }

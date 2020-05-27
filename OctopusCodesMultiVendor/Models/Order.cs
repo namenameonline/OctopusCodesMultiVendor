@@ -20,6 +20,7 @@ namespace OctopusCodesMultiVendor.Models
             this.OrdersDetails = new HashSet<OrdersDetail>();
             this.OrderAddresses = new HashSet<OrderAddress>();
             this.VendorPendingPayments = new HashSet<VendorPendingPayment>();
+            this.VendorPendingDeliveries = new HashSet<VendorPendingDelivery>();
         }
     
         public int Id { get; set; }
@@ -30,6 +31,7 @@ namespace OctopusCodesMultiVendor.Models
         public int OrderStatusId { get; set; }
         public Nullable<int> PaymentId { get; set; }
         public int PaymentStatusId { get; set; }
+        public string PaymentReference { get; set; }
     
         public virtual Account Account { get; set; }
         public virtual OrderStatu OrderStatu { get; set; }
@@ -42,5 +44,7 @@ namespace OctopusCodesMultiVendor.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VendorPendingPayment> VendorPendingPayments { get; set; }
         public virtual PaymentStatu PaymentStatu { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
     }
 }

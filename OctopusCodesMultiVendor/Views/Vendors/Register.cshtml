@@ -73,8 +73,25 @@
             City
         </label>
         <div class="controls">
-            @Html.TextBoxFor(model => model.defaultAddress.City, new { @class = "input-xxlarge", required = "required", placeholder = "City" })
-            @Html.ValidationMessageFor(model => model.defaultAddress.City)
+            <select name="defaultAddress.City">
+                @foreach (var city in ViewBag.cities)
+                {
+                    string selectedCity = "";
+                    if (Model.defaultAddress != null)
+                    {
+                        selectedCity = Model.defaultAddress.City;
+                    }
+                    if (selectedCity == city)
+                    {
+                        <option value="@city" selected>@city</option>
+                    }
+                    else
+                    {
+                        <option value="@city">@city</option>
+
+                    }
+                }
+            </select>
         </div>
     </div>
 

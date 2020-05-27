@@ -14,7 +14,7 @@
         Photo mainPhoto = pr.Photos.SingleOrDefault(p => p.Main && p.Status);
         <li class="span3">
             <div class="thumbnail">
-                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" style='height: 158px; width: 158px; object-fit: contain'/></a>
+                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" style='height: 158px; width: 158px; object-fit: contain' /></a>
                 <div class="caption">
                     <h5>@product.Name</h5>
                     <p>
@@ -22,8 +22,10 @@
                     </p>
 
                     <h4 style="text-align:center">
-                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a> 
-                        <a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a> 
+                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a>
+                        <!--<a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a>-->
+                        <a class="btn" href="#" onclick="AddToCart(@pr.Id)">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a>
+                        
                         <a class="btn btn-primary" href="@Url.Action("Detail", "Product", new { id = product.Id })">@product.Price.ToString("c")</a>
                     </h4>
                 </div>
@@ -40,7 +42,7 @@
         Photo mainPhoto = pr.Photos.SingleOrDefault(p => p.Main && p.Status);
         <li class="span3">
             <div class="thumbnail">
-                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")"  style='height: 158px; width: 158px; object-fit: contain' /></a>
+                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" style='height: 158px; width: 158px; object-fit: contain' /></a>
                 <div class="caption">
                     <h5>@product.Name</h5>
                     <p>
@@ -48,8 +50,8 @@
                     </p>
 
                     <h4 style="text-align:center">
-                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a> 
-                        <a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a> 
+                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a>
+                        <a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a>
                         <a class="btn btn-primary" href="@Url.Action("Detail", "Product", new { id = product.Id })">@product.Price.ToString("c")</a>
                     </h4>
                 </div>
@@ -66,7 +68,7 @@
         Photo mainPhoto = pr.Photos.SingleOrDefault(p => p.Main && p.Status);
         <li class="span3">
             <div class="thumbnail">
-                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")"  style='height: 158px; width: 158px; object-fit: contain' /></a>
+                <a href="@Url.Action("Detail", "Product", new { id = product.Id })"><img src="~/Content/User/Images/@(mainPhoto != null ? mainPhoto.Name : "no-image.png")" style='height: 158px; width: 158px; object-fit: contain' /></a>
                 <div class="caption">
                     <h5>@product.Name</h5>
                     <p>
@@ -74,8 +76,8 @@
                     </p>
 
                     <h4 style="text-align:center">
-                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a> 
-                        <a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a> 
+                        <a class="btn" href="@Url.Action("Detail", "Product", new { id = product.Id })"> <i class="icon-zoom-in"></i></a>
+                        <a class="btn" href="@Url.Action("Buy", "Cart", new { id = product.Id })">@Resources.Home.Add_to <i class="icon-shopping-cart"></i></a>
                         <a class="btn btn-primary" href="@Url.Action("Detail", "Product", new { id = product.Id })">@product.Price.ToString("c")</a>
                     </h4>
                 </div>
@@ -83,3 +85,50 @@
         </li>
     }
 </ul>
+<script language="javascript">
+    var $loading = $('#loading').hide();
+    $(document)
+        .ajaxStart(function () {
+            $loading.show();
+        })
+        .ajaxStop(function () {
+            $loading.hide();
+        });
+
+  
+    function AddToCart(id) {
+        $.ajax(
+            {
+                url: "/api/CartApi/Buy", // be consistent and case the route the same as the ApiController
+                type: "GET",
+                data: {
+                    'id': id
+                },
+                beforeSend: function () {
+                    // Show image container
+                    $("#loading-overlay").show();
+                },
+                success: function (result) {
+                    var res = result.split(';');
+                    if (res[0] == 'OK') {
+                        $('#total').text(res[1]);
+                        $('#totalitem').text(res[2]);
+                    } else {
+                        alert('Not ok');
+                    }
+
+
+                    console.log(result);
+                },
+                error: function (xhr, status, p3, p4) {
+                    
+                    console.log(err);
+                },
+                complete: function (data) {
+                    // Hide image container
+                    $("#loading-overlay").hide();
+                }
+            });
+    }
+   
+</script>

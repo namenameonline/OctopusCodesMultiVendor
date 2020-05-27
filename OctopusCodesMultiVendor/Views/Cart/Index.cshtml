@@ -7,7 +7,7 @@
 
 @using OctopusCodesMultiVendor.Models;
 @using OctopusCodesMultiVendor.Security;
-@model OctopusCodesMultiVendor.Models.ViewModels.CartViewModel
+@model OctopusCodesMultiVendor.Models.ViewModels.Cart.CartViewModel
 
 <ul class="breadcrumb">
     <li><a href="@Url.Action("Index", "Home")">@Resources.UserTemplate.Home</a> <span class="divider">/</span></li>
@@ -57,17 +57,19 @@
                         @item.product.Vendor.Name
                     </td>
                     <td>
-                        <form method="post" action="@Url.Action("Update", "Cart")" id="frmUpdateQty">
+                        
                             <div class="input-append">
                                 <input class="span1" style="max-width:50px" placeholder="1" id="appendedInputButtons" size="16" type="number" min="1" value="@item.quantity" name="quantity">
-                                <button class="btn" type="submit"><i class="icon-save"></i></button>
+                                <button class="btn" type="button" onclick="UpdateCart('@item.product.Id')"><i class="icon-save"></i></button>
                                 <input type="hidden" name="productId" value="@item.product.Id" />
                             </div>
-                        </form>
+                        
                     </td>
 
                     <td>@item.product.Price.ToString("c")</td>
-                    <td>@((item.quantity * item.product.WeightInGrams).ToString())</td>
+                    <td>
+                        @((item.quantity * item.product.WeightInGrams).ToString())                        
+                    </td>
                     <td><div class="@("est" + item.product.VendorId)"></div></td>
                     <td>
                         @((item.product.Price * item.quantity).ToString("c"))
@@ -87,14 +89,23 @@
             </tr>
             <tr>
                 <td colspan="7" style="text-align:right">@Resources.Cart.Total_Price:	</td>
-                <td class="label label-important" style="display:block"> <strong> @(cart.Sum(i => i.product.Price * i.quantity).ToString("c")) </strong></td>
+                <td class="label label-important" style="display:block"> <strong>
+                 <div id="totalsum">
+                 @{
+                  decimal total = (cart.Sum(i => i.product.Price * i.quantity));
+                  }
+                  @total.ToString("c")
+                  </div>
+                <input type="hidden" id="totalamt" name="totalamt" value="@total" />
+                    
+</strong></td>
 
             </tr>
-        }
+                        }
 
     </tbody>
 </table>
-<form method="post" action="@Url.Action("MakePayment", "Cart")">
+<form method="post" action="@Url.Action("MakePayment", "Cart")" id="FormCart">
     <div class="box-body">
         Address:
         <div class="form-group">
@@ -144,14 +155,14 @@
 
     @if (SessionPersister.account == null)
     {
-        <a href="@Url.Action("Login", "Customer")" class="btn btn-large pull-right">@Resources.Cart.Please_login_before_checkout <i class="icon-arrow-right"></i></a>
+        <a href="@Url.Action("Login", "Customer",new { redirectUrl="/Cart"})" class="btn btn-large pull-right">@Resources.Cart.Please_login_before_checkout <i class="icon-arrow-right"></i></a>
     }
     else
     {
         var account = SessionPersister.account;
         if (account is Account && !((OctopusCodesMultiVendor.Models.Account)account).IsAdmin)
         {
-            <button type="submit" class="btn btn-large btn-primary">@Resources.Cart.MakePayment</button>
+            <button type="button" onclick="OnFormSubmit()" class="btn btn-large btn-primary">@Resources.Cart.MakePayment</button>
         }
     }
 </form>
@@ -173,11 +184,20 @@
         var option = deliveryOptionJson.DeliveryOption[selectedOption];
         for (i = 0; i < option.detail.length; i++) {
             var detail = option.detail[i];
-            $('.est' + detail.vendorid).each(function () {            //iterates all elements having stick class
+            $('.est' + detail.vendorid).each(function () {
+               
                 $(this).text(detail.etd);
-            });
+            });           
 
         }
+        var deliveryFee = option.totalfee;
+        var totaltxt = $('#totalamt').val();
+        var total = accounting.unformat(totaltxt, ",");
+        var totalSum = total + deliveryFee;
+        $('#TotalDeliveryFee').text(accounting.formatMoney(deliveryFee));
+       
+        $('#totalsum').text(accounting.formatMoney(totalSum));
+        //$('#totalamt').val(totalSum);
     }
     function RetrieveDeliveryFeeOptions() {
         $.ajax(
@@ -217,28 +237,53 @@
                 }
             });
     }
-    function UpdateProductQuantity() {
-        $('#cartTable').css("progress");
-        var form = $('#frmUpdateQty');
+    
+    function OnFormSubmit() {
+        var selectedDelivery = $('input[name=SelectedDeliveryOption]:checked').val();
+        if (selectedDelivery == null) {
+            alert('Please choose delivery option');
+            return;
+        }
+        $('form').submit();
+    }
+    function UpdateCart(id) {
+        var cartData = {
+            "Id": id,
+            "Quantity": $('#appendedInputButtons').val(),
+        };
+        var myData = {};
+        myData.cartData = cartData;
         $.ajax(
             {
-                url: "/Cart/Update", // be consistent and case the route the same as the ApiController
+                url: "/api/CartApi/Update", // be consistent and case the route the same as the ApiController
                 type: "POST",
-                data:
-                    form.serialize()
-                ,
+                dataType: "json",
+                data: myData,
+                beforeSend: function () {
+                    // Show image container
+                    $("#loading-overlay").show();
+                },
                 success: function (result) {
+                    var res = result.split(';');
+                    if (res[0] == 'OK') {                      
+                        var selectedDelivery = $("#City").val();
+                        location.reload(true);
+                    } else {
+                        alert('Not ok');
+                    }
 
 
-                    if (result == "NOTOK")
-                        alert('Item not updated');
+                    console.log(result);
                 },
                 error: function (xhr, status, p3, p4) {
-                    alert('Item not updated');
+
                     console.log(err);
+                },
+                complete: function (data) {
+                    // Hide image container
+                    $("#loading-overlay").hide();
                 }
             });
-        $('#cartTable').css("");
     }
     function OnFormLoad() {
         $('#cartTable').css("progress");

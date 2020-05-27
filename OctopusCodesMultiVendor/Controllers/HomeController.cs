@@ -16,6 +16,10 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
+                //var key = "12345678901234567890123456789012";
+                string encrypted = EncryptHelper.EncryptString(ocmde.Settings.Find(29).Value,"123");
+                string decrypted = EncryptHelper.DecryptString(ocmde.Settings.Find(29).Value, encrypted);
+
                 var products = new List<Product>();
                 ocmde.Vendors.ToList().ForEach(v => {
                     if (VendorHelper.checkExpires(v.Id))

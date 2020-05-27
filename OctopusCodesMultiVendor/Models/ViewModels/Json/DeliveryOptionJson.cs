@@ -44,7 +44,7 @@ namespace OctopusCodesMultiVendor.Models.ViewModels.Json
         [JsonProperty("vendorid")]        
         public string Vendorid { get; set; }
         [JsonProperty("totalfee")]
-        public long fee { get; set; }
+        public long totalfee { get; set; }
 
         [JsonProperty("etd")]
         public string Etd { get; set; }

@@ -30,6 +30,7 @@ namespace OctopusCodesMultiVendor.Models
     public partial class Vendor
     {
         public VendorAddress defaultAddress { get; set; }
+        public VendorPaymentInfo vendorPaymentInfo { get; set; }
     }
 
 }

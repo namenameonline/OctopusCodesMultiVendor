@@ -1,4 +1,4 @@
-﻿@model OctopusCodesMultiVendor.Models.ViewModels.ResetPasswordModel
+﻿@model OctopusCodesMultiVendor.Models.ViewModels.Login.ResetPasswordModel
 
 @{
     ViewBag.Title = "Reset";
@@ -7,34 +7,35 @@
 
 <h2>Reset</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
+
     <h4>Reset Password:</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.PasswordFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+    <div class="control-group">
+        <label class="control-label" for="textarea">@(Resources.Customer.Password)*</label>
+        <div class="controls">
+            @Html.TextBoxFor(model => model.Password, new { @class = "input-xxlarge", required = "required", placeholder = Resources.Customer.Password })
+            <br />
+            @Html.ValidationMessageFor(model => model.Password)
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.PasswordFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+    <div class="control-group">
+        <label class="control-label" for="textarea">Confirm Password*</label>
+        <div class="controls">
+            @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "input-xxlarge", required = "required", placeholder = Resources.Customer.Password })
+            <br />
+            @Html.ValidationMessageFor(model => model.ConfirmPassword)
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
+    
+    <div class="control-group">
+        <div class="colcontrols">
             <input type="submit" value="Create" class="btn btn-default" />
         </div>
     </div>
-</div>
 }
 
 

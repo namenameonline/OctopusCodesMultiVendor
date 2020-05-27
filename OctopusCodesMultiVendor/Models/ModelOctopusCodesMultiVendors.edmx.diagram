@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1224933a3e354f42bcd03e94b302f4ac" Name="Diagram1" ZoomLevel="81">
+      <Diagram DiagramId="1224933a3e354f42bcd03e94b302f4ac" Name="Diagram1" ZoomLevel="89">
         <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.Account" Width="1.5" PointX="1.375" PointY="2.875" />
         <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.Category" Width="1.5" PointX="3" PointY="24" />
         <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.MemberShip" Width="1.5" PointX="0.75" PointY="14.125" />
@@ -50,6 +50,21 @@
         <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Vendor" />
         <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.PaymentStatu" Width="1.5" PointX="8.5" PointY="0.875" />
         <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_Orders_PaymentStatus" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.AccountPaymentInfo" Width="1.5" PointX="3.75" PointY="38.625" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.VendorPaymentInfo" Width="1.5" PointX="2.875" PointY="35" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_AccountPaymentInfo_Account" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_VendorPaymentInfo_Vendor" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.VendorPendingDelivery" Width="1.5" PointX="11.25" PointY="13" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Orders" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Vendor" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.MessageSenderType" Width="2.375" PointX="10.25" PointY="4.625" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_Message_MessageSenderType" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.MessageDetail" Width="3.25" PointX="14.125" PointY="2.25" />
+        <EntityTypeShape EntityType="OctopusCodesMultiVendorsModel.MessageHeader" Width="1.5" PointX="11.875" PointY="0.75" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account1" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_MessageDetail_MessageHeader" />
+        <AssociationConnector Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Vendor" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -47,5 +47,11 @@ namespace OctopusCodesMultiVendor.Models
         public virtual DbSet<RajaOngkir_CityMapping> RajaOngkir_CityMapping { get; set; }
         public virtual DbSet<VendorPendingPayment> VendorPendingPayments { get; set; }
         public virtual DbSet<PaymentStatu> PaymentStatus { get; set; }
+        public virtual DbSet<AccountPaymentInfo> AccountPaymentInfoes { get; set; }
+        public virtual DbSet<VendorPaymentInfo> VendorPaymentInfoes { get; set; }
+        public virtual DbSet<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
+        public virtual DbSet<MessageSenderType> MessageSenderTypes { get; set; }
+        public virtual DbSet<MessageDetail> MessageDetails { get; set; }
+        public virtual DbSet<MessageHeader> MessageHeaders { get; set; }
     }
 }

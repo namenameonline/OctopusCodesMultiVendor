@@ -30,6 +30,16 @@
           <Property Name="ZipCode" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="AccountPaymentInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="CreditCardNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ExpiryDate" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="AccountId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Category">
           <Key>
             <PropertyRef Name="Id" />
@@ -80,6 +90,37 @@
           <Property Name="CustomerId" Type="int" Nullable="false" />
           <Property Name="VendorId" Type="int" Nullable="false" />
           <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="Sender" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessageDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MessageHeaderId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Body" Type="ntext" Nullable="false" />
+          <Property Name="DateCreation" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="Sender" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessageHeader">
+          <Key>
+            <PropertyRef Name="MsgId" />
+          </Key>
+          <Property Name="MsgId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LastMessage" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+          <Property Name="VendorId" Type="int" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="AdminId" Type="int" />
+          <Property Name="SenderType" Type="int" />
+        </EntityType>
+        <EntityType Name="MessageSenderType">
+          <Key>
+            <PropertyRef Name="SenderType" />
+          </Key>
+          <Property Name="SenderType" Type="int" Nullable="false" />
+          <Property Name="SenderTypeDescription" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="OrderAddress">
           <Key>
@@ -104,6 +145,7 @@
           <Property Name="OrderStatusId" Type="int" Nullable="false" />
           <Property Name="PaymentId" Type="int" />
           <Property Name="PaymentStatusId" Type="int" Nullable="false" />
+          <Property Name="PaymentReference" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="OrdersDetail">
           <Key>
@@ -229,6 +271,29 @@
           <Property Name="ZipCode" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="VendorId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="VendorPaymentInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="CreditCardNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ExpiryDate" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VendorPendingDelivery">
+          <Key>
+            <PropertyRef Name="DeliveryOrderId" />
+          </Key>
+          <Property Name="DeliveryOrderId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="StartDeliveryDate" Type="datetime" />
+          <Property Name="EstimatedDeliveredDays" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="EstimatedDeliveredDate" Type="datetime" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="TrackingId" Type="nvarchar" MaxLength="250" />
+          <Property Name="DeliveredDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="VendorPendingPayment">
           <Key>
             <PropertyRef Name="PaymentOrderID" />
@@ -248,6 +313,18 @@
             </Principal>
             <Dependent Role="AccountAddress">
               <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccountPaymentInfo_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="AccountPaymentInfo" Type="Self.AccountPaymentInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccountPaymentInfo">
+              <PropertyRef Name="AccountId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -311,6 +388,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Message_MessageSenderType">
+          <End Role="MessageSenderType" Type="Self.MessageSenderType" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MessageSenderType">
+              <PropertyRef Name="SenderType" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="Sender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Message_Vendor">
           <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
           <End Role="Message" Type="Self.Message" Multiplicity="*" />
@@ -319,6 +408,54 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Message">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageDetail_MessageHeader">
+          <End Role="MessageHeader" Type="Self.MessageHeader" Multiplicity="1" />
+          <End Role="MessageDetail" Type="Self.MessageDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MessageHeader">
+              <PropertyRef Name="MsgId" />
+            </Principal>
+            <Dependent Role="MessageDetail">
+              <PropertyRef Name="MessageHeaderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageHeader_Account">
+          <End Role="Account" Type="Self.Account" Multiplicity="0..1" />
+          <End Role="MessageHeader" Type="Self.MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageHeader_Account1">
+          <End Role="Account" Type="Self.Account" Multiplicity="0..1" />
+          <End Role="MessageHeader" Type="Self.MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
+              <PropertyRef Name="AdminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageHeader_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="MessageHeader" Type="Self.MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
               <PropertyRef Name="VendorId" />
             </Dependent>
           </ReferentialConstraint>
@@ -491,6 +628,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_VendorPaymentInfo_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="VendorPaymentInfo" Type="Self.VendorPaymentInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPaymentInfo">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingDelivery_Orders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="VendorPendingDelivery" Type="Self.VendorPendingDelivery" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingDelivery">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingDelivery_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="VendorPendingDelivery" Type="Self.VendorPendingDelivery" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingDelivery">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_VendorPendingPayment_Orders">
           <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
           <End Role="VendorPendingPayment" Type="Self.VendorPendingPayment" Multiplicity="*" />
@@ -518,11 +691,15 @@
         <EntityContainer Name="OctopusCodesMultiVendorsModelStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AccountAddress" EntityType="Self.AccountAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountPaymentInfo" EntityType="Self.AccountPaymentInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ForgetPassword" EntityType="Self.ForgetPassword" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MemberShip" EntityType="Self.MemberShip" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MemberShipVendor" EntityType="Self.MemberShipVendor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Message" EntityType="Self.Message" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageDetail" EntityType="Self.MessageDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageHeader" EntityType="Self.MessageHeader" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageSenderType" EntityType="Self.MessageSenderType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderAddress" EntityType="Self.OrderAddress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrdersDetail" EntityType="Self.OrdersDetail" Schema="dbo" store:Type="Tables" />
@@ -537,10 +714,16 @@
           <EntitySet Name="Setting" EntityType="Self.Setting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VendorAddress" EntityType="Self.VendorAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VendorPaymentInfo" EntityType="Self.VendorPaymentInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VendorPendingDelivery" EntityType="Self.VendorPendingDelivery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VendorPendingPayment" EntityType="Self.VendorPendingPayment" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_AccountAddress_Account" Association="Self.FK_AccountAddress_Account">
             <End Role="Account" EntitySet="Account" />
             <End Role="AccountAddress" EntitySet="AccountAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccountPaymentInfo_Account" Association="Self.FK_AccountPaymentInfo_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="AccountPaymentInfo" EntitySet="AccountPaymentInfo" />
           </AssociationSet>
           <AssociationSet Name="FK_Category_Category" Association="Self.FK_Category_Category">
             <End Role="Category" EntitySet="Category" />
@@ -562,9 +745,29 @@
             <End Role="Account" EntitySet="Account" />
             <End Role="Message" EntitySet="Message" />
           </AssociationSet>
+          <AssociationSet Name="FK_Message_MessageSenderType" Association="Self.FK_Message_MessageSenderType">
+            <End Role="MessageSenderType" EntitySet="MessageSenderType" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
           <AssociationSet Name="FK_Message_Vendor" Association="Self.FK_Message_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageDetail_MessageHeader" Association="Self.FK_MessageDetail_MessageHeader">
+            <End Role="MessageHeader" EntitySet="MessageHeader" />
+            <End Role="MessageDetail" EntitySet="MessageDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageHeader_Account" Association="Self.FK_MessageHeader_Account">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="MessageHeader" EntitySet="MessageHeader" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageHeader_Account1" Association="Self.FK_MessageHeader_Account1">
+            <End Role="Account" EntitySet="Account" />
+            <End Role="MessageHeader" EntitySet="MessageHeader" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageHeader_Vendor" Association="Self.FK_MessageHeader_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="MessageHeader" EntitySet="MessageHeader" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderAddress_Orders" Association="Self.FK_OrderAddress_Orders">
             <End Role="Orders" EntitySet="Orders" />
@@ -621,6 +824,18 @@
           <AssociationSet Name="FK_VendorAddress_Vendor" Association="Self.FK_VendorAddress_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="VendorAddress" EntitySet="VendorAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPaymentInfo_Vendor" Association="Self.FK_VendorPaymentInfo_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="VendorPaymentInfo" EntitySet="VendorPaymentInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingDelivery_Orders" Association="Self.FK_VendorPendingDelivery_Orders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="VendorPendingDelivery" EntitySet="VendorPendingDelivery" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingDelivery_Vendor" Association="Self.FK_VendorPendingDelivery_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="VendorPendingDelivery" EntitySet="VendorPendingDelivery" />
           </AssociationSet>
           <AssociationSet Name="FK_VendorPendingPayment_Orders" Association="Self.FK_VendorPendingPayment_Orders">
             <End Role="Orders" EntitySet="Orders" />
@@ -750,6 +965,48 @@
             <End Role="PaymentStatu" EntitySet="PaymentStatus" />
             <End Role="Order" EntitySet="Orders" />
           </AssociationSet>
+          <EntitySet Name="AccountPaymentInfoes" EntityType="OctopusCodesMultiVendorsModel.AccountPaymentInfo" />
+          <EntitySet Name="VendorPaymentInfoes" EntityType="OctopusCodesMultiVendorsModel.VendorPaymentInfo" />
+          <AssociationSet Name="FK_AccountPaymentInfo_Account" Association="OctopusCodesMultiVendorsModel.FK_AccountPaymentInfo_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="AccountPaymentInfo" EntitySet="AccountPaymentInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPaymentInfo_Vendor" Association="OctopusCodesMultiVendorsModel.FK_VendorPaymentInfo_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="VendorPaymentInfo" EntitySet="VendorPaymentInfoes" />
+          </AssociationSet>
+          <EntitySet Name="VendorPendingDeliveries" EntityType="OctopusCodesMultiVendorsModel.VendorPendingDelivery" />
+          <AssociationSet Name="FK_VendorPendingDelivery_Orders" Association="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Orders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="VendorPendingDelivery" EntitySet="VendorPendingDeliveries" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VendorPendingDelivery_Vendor" Association="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="VendorPendingDelivery" EntitySet="VendorPendingDeliveries" />
+          </AssociationSet>
+          <EntitySet Name="MessageSenderTypes" EntityType="OctopusCodesMultiVendorsModel.MessageSenderType" />
+          <AssociationSet Name="FK_Message_MessageSenderType" Association="OctopusCodesMultiVendorsModel.FK_Message_MessageSenderType">
+            <End Role="MessageSenderType" EntitySet="MessageSenderTypes" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <EntitySet Name="MessageDetails" EntityType="OctopusCodesMultiVendorsModel.MessageDetail" />
+          <EntitySet Name="MessageHeaders" EntityType="OctopusCodesMultiVendorsModel.MessageHeader" />
+          <AssociationSet Name="FK_MessageHeader_Account" Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="MessageHeader" EntitySet="MessageHeaders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageHeader_Account1" Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account1">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="MessageHeader" EntitySet="MessageHeaders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageDetail_MessageHeader" Association="OctopusCodesMultiVendorsModel.FK_MessageDetail_MessageHeader">
+            <End Role="MessageHeader" EntitySet="MessageHeaders" />
+            <End Role="MessageDetail" EntitySet="MessageDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageHeader_Vendor" Association="OctopusCodesMultiVendorsModel.FK_MessageHeader_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="MessageHeader" EntitySet="MessageHeaders" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Account">
           <Key>
@@ -768,6 +1025,9 @@
           <NavigationProperty Name="Orders" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_Account" FromRole="Account" ToRole="Order" />
           <NavigationProperty Name="Reviews" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Account" FromRole="Account" ToRole="Review" />
           <NavigationProperty Name="AccountAddresses" Relationship="OctopusCodesMultiVendorsModel.FK_AccountAddress_Account" FromRole="Account" ToRole="AccountAddress" />
+          <NavigationProperty Name="AccountPaymentInfoes" Relationship="OctopusCodesMultiVendorsModel.FK_AccountPaymentInfo_Account" FromRole="Account" ToRole="AccountPaymentInfo" />
+          <NavigationProperty Name="MessageHeaders" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account" FromRole="Account" ToRole="MessageHeader" />
+          <NavigationProperty Name="MessageHeaders1" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account1" FromRole="Account" ToRole="MessageHeader" />
         </EntityType>
         <EntityType Name="Category">
           <Key>
@@ -821,6 +1081,8 @@
           <Property Name="Status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Account" FromRole="Message" ToRole="Account" />
           <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_Message_Vendor" FromRole="Message" ToRole="Vendor" />
+          <Property Name="Sender" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MessageSenderType" Relationship="OctopusCodesMultiVendorsModel.FK_Message_MessageSenderType" FromRole="Message" ToRole="MessageSenderType" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -842,6 +1104,8 @@
           <NavigationProperty Name="VendorPendingPayments" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Orders" FromRole="Order" ToRole="VendorPendingPayment" />
           <Property Name="PaymentStatusId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="PaymentStatu" Relationship="OctopusCodesMultiVendorsModel.FK_Orders_PaymentStatus" FromRole="Order" ToRole="PaymentStatu" />
+          <NavigationProperty Name="VendorPendingDeliveries" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Orders" FromRole="Order" ToRole="VendorPendingDelivery" />
+          <Property Name="PaymentReference" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrdersDetail">
           <Key>
@@ -955,6 +1219,9 @@
           <NavigationProperty Name="Reviews" Relationship="OctopusCodesMultiVendorsModel.FK_Review_Vendor" FromRole="Vendor" ToRole="Review" />
           <NavigationProperty Name="VendorAddresses" Relationship="OctopusCodesMultiVendorsModel.FK_VendorAddress_Vendor" FromRole="Vendor" ToRole="VendorAddress" />
           <NavigationProperty Name="VendorPendingPayments" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingPayment_Vendor" FromRole="Vendor" ToRole="VendorPendingPayment" />
+          <NavigationProperty Name="VendorPaymentInfoes" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPaymentInfo_Vendor" FromRole="Vendor" ToRole="VendorPaymentInfo" />
+          <NavigationProperty Name="VendorPendingDeliveries" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Vendor" FromRole="Vendor" ToRole="VendorPendingDelivery" />
+          <NavigationProperty Name="MessageHeaders" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Vendor" FromRole="Vendor" ToRole="MessageHeader" />
         </EntityType>
         <Association Name="FK_Message_Account">
           <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
@@ -1307,6 +1574,187 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AccountPaymentInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="CreditCardNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_AccountPaymentInfo_Account" FromRole="AccountPaymentInfo" ToRole="Account" />
+        </EntityType>
+        <EntityType Name="VendorPaymentInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="CreditCardNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPaymentInfo_Vendor" FromRole="VendorPaymentInfo" ToRole="Vendor" />
+        </EntityType>
+        <Association Name="FK_AccountPaymentInfo_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.AccountPaymentInfo" Role="AccountPaymentInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccountPaymentInfo">
+              <PropertyRef Name="AccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPaymentInfo_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorPaymentInfo" Role="VendorPaymentInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPaymentInfo">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="VendorPendingDelivery">
+          <Key>
+            <PropertyRef Name="DeliveryOrderId" />
+          </Key>
+          <Property Name="DeliveryOrderId" Type="Guid" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" />
+          <Property Name="StartDeliveryDate" Type="DateTime" Precision="3" />
+          <Property Name="EstimatedDeliveredDays" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EstimatedDeliveredDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Orders" FromRole="VendorPendingDelivery" ToRole="Order" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_VendorPendingDelivery_Vendor" FromRole="VendorPendingDelivery" ToRole="Vendor" />
+          <Property Name="TrackingId" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveredDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_VendorPendingDelivery_Orders">
+          <End Type="OctopusCodesMultiVendorsModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorPendingDelivery" Role="VendorPendingDelivery" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingDelivery">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VendorPendingDelivery_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.VendorPendingDelivery" Role="VendorPendingDelivery" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VendorPendingDelivery">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MessageSenderType">
+          <Key>
+            <PropertyRef Name="SenderType" />
+          </Key>
+          <Property Name="SenderType" Type="Int32" Nullable="false" />
+          <Property Name="SenderTypeDescription" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Messages" Relationship="OctopusCodesMultiVendorsModel.FK_Message_MessageSenderType" FromRole="MessageSenderType" ToRole="Message" />
+        </EntityType>
+        <Association Name="FK_Message_MessageSenderType">
+          <End Type="OctopusCodesMultiVendorsModel.MessageSenderType" Role="MessageSenderType" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.Message" Role="Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MessageSenderType">
+              <PropertyRef Name="SenderType" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="Sender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MessageDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="MessageHeaderId" Type="Guid" Nullable="false" />
+          <Property Name="Body" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MessageHeader" Relationship="OctopusCodesMultiVendorsModel.FK_MessageDetail_MessageHeader" FromRole="MessageDetail" ToRole="MessageHeader" />
+          <Property Name="Sender" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessageHeader">
+          <Key>
+            <PropertyRef Name="MsgId" />
+          </Key>
+          <Property Name="MsgId" Type="Guid" Nullable="false" />
+          <Property Name="LastMessage" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="VendorId" Type="Int32" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="AdminId" Type="Int32" />
+          <NavigationProperty Name="Account" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account" FromRole="MessageHeader" ToRole="Account" />
+          <NavigationProperty Name="Account1" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Account1" FromRole="MessageHeader" ToRole="Account" />
+          <NavigationProperty Name="MessageDetails" Relationship="OctopusCodesMultiVendorsModel.FK_MessageDetail_MessageHeader" FromRole="MessageHeader" ToRole="MessageDetail" />
+          <NavigationProperty Name="Vendor" Relationship="OctopusCodesMultiVendorsModel.FK_MessageHeader_Vendor" FromRole="MessageHeader" ToRole="Vendor" />
+          <Property Name="SenderType" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_MessageHeader_Account">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.MessageHeader" Role="MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageHeader_Account1">
+          <End Type="OctopusCodesMultiVendorsModel.Account" Role="Account" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.MessageHeader" Role="MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
+              <PropertyRef Name="AdminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageDetail_MessageHeader">
+          <End Type="OctopusCodesMultiVendorsModel.MessageHeader" Role="MessageHeader" Multiplicity="1" />
+          <End Type="OctopusCodesMultiVendorsModel.MessageDetail" Role="MessageDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MessageHeader">
+              <PropertyRef Name="MsgId" />
+            </Principal>
+            <Dependent Role="MessageDetail">
+              <PropertyRef Name="MessageHeaderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MessageHeader_Vendor">
+          <End Type="OctopusCodesMultiVendorsModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="OctopusCodesMultiVendorsModel.MessageHeader" Role="MessageHeader" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageHeader">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1366,6 +1814,7 @@
           <EntitySetMapping Name="Messages">
             <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Message">
               <MappingFragment StoreEntitySet="Message">
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="VendorId" ColumnName="VendorId" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
@@ -1379,6 +1828,7 @@
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.Order">
               <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="PaymentReference" ColumnName="PaymentReference" />
                 <ScalarProperty Name="PaymentStatusId" ColumnName="PaymentStatusId" />
                 <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
                 <ScalarProperty Name="OrderStatusId" ColumnName="OrderStatusId" />
@@ -1565,6 +2015,75 @@
               <MappingFragment StoreEntitySet="PaymentStatus">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountPaymentInfoes">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.AccountPaymentInfo">
+              <MappingFragment StoreEntitySet="AccountPaymentInfo">
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="CreditCardNo" ColumnName="CreditCardNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VendorPaymentInfoes">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.VendorPaymentInfo">
+              <MappingFragment StoreEntitySet="VendorPaymentInfo">
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="CreditCardNo" ColumnName="CreditCardNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VendorPendingDeliveries">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.VendorPendingDelivery">
+              <MappingFragment StoreEntitySet="VendorPendingDelivery">
+                <ScalarProperty Name="DeliveredDate" ColumnName="DeliveredDate" />
+                <ScalarProperty Name="TrackingId" ColumnName="TrackingId" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="EstimatedDeliveredDate" ColumnName="EstimatedDeliveredDate" />
+                <ScalarProperty Name="EstimatedDeliveredDays" ColumnName="EstimatedDeliveredDays" />
+                <ScalarProperty Name="StartDeliveryDate" ColumnName="StartDeliveryDate" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="DeliveryOrderId" ColumnName="DeliveryOrderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessageSenderTypes">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.MessageSenderType">
+              <MappingFragment StoreEntitySet="MessageSenderType">
+                <ScalarProperty Name="SenderTypeDescription" ColumnName="SenderTypeDescription" />
+                <ScalarProperty Name="SenderType" ColumnName="SenderType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessageDetails">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.MessageDetail">
+              <MappingFragment StoreEntitySet="MessageDetail">
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DateCreation" ColumnName="DateCreation" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="MessageHeaderId" ColumnName="MessageHeaderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessageHeaders">
+            <EntityTypeMapping TypeName="OctopusCodesMultiVendorsModel.MessageHeader">
+              <MappingFragment StoreEntitySet="MessageHeader">
+                <ScalarProperty Name="SenderType" ColumnName="SenderType" />
+                <ScalarProperty Name="AdminId" ColumnName="AdminId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastMessage" ColumnName="LastMessage" />
+                <ScalarProperty Name="MsgId" ColumnName="MsgId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

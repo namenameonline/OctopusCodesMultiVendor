@@ -16,11 +16,11 @@ namespace OctopusCodesMultiVendor.Helpers
         public static void SendEmail(string from,string recipient, string subject,string body,string attachmentFile)
         {
 
-            var smtpClient = new SmtpClient(ocmde.Settings.Find(15).Value)
+            var smtpClient = new SmtpClient(SettingsHelper.SMTP_HOST)
             {
-                Port = int.Parse(ocmde.Settings.Find(18).Value),
-                Credentials = new NetworkCredential(ocmde.Settings.Find(16).Value, ocmde.Settings.Find(17).Value),
-                EnableSsl = true,
+                Port = int.Parse(SettingsHelper.SMTP_PORT),
+                Credentials = new NetworkCredential(SettingsHelper.SMTP_USER, SettingsHelper.SMTP_PASSWORD),
+                EnableSsl = bool.Parse(SettingsHelper.SMTP_ENABLE_SSL)
             };
             var mailMessage = new MailMessage
             {

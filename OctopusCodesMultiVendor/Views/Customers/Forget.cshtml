@@ -1,4 +1,4 @@
-﻿@model OctopusCodesMultiVendor.Models.ViewModels.ForgetPasswordViewModel
+﻿@model OctopusCodesMultiVendor.Models.ViewModels.Login.ForgetPasswordViewModel
 
 @{
     ViewBag.Title = "Forget";
@@ -15,14 +15,7 @@
     <h4>Forget Password</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="control-group">
-        <div class="controls">
-            @Html.TextBoxFor(model => model.Username, new { @class = "input-xxlarge", required = "required", placeholder = Resources.Customer.Username })
-            <br />
-            @Html.ValidationMessageFor(model => model.Username)
-        </div>
-    </div>
-    <div>or</div>
+    
     <div class="control-group">
         <div class="controls">
             @Html.TextBoxFor(model => model.Email, new { @class = "input-xxlarge", required = "required", placeholder = Resources.Customer.Email })

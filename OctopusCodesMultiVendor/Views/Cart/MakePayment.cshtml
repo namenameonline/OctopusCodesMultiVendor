@@ -2,7 +2,7 @@
 
 @using OctopusCodesMultiVendor.Models;
 @using OctopusCodesMultiVendor.Security;
-@model OctopusCodesMultiVendor.Models.ViewModels.CartViewModel
+@model OctopusCodesMultiVendor.Models.ViewModels.Cart.CartViewModel
 <link href="https://fonts.googleapis.com/css?family=Raleway|Rock+Salt|Source+Code+Pro:300,400,600" rel="stylesheet">
 
 
@@ -202,33 +202,41 @@
 </div>
 @using (Html.BeginForm("Charge", "Cart", FormMethod.Post, new { @class = "form-inline" }))
 {<div class="form-container">
-        <div class="field-container">
-            <label for="name">Name</label>
-            <input id="name" maxlength="20" type="text">
-        </div>
-        <div class="field-container">
-            <label for="cardnumber">Card Number</label><span id="generatecard">generate random</span>
-            <input id="cardnumber" type="text" pattern="[0-9]*" inputmode="numeric">
-            <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink">
-            </svg>
-        </div>
-        <div class="field-container">
-            <label for="expirationdate">Expiration (mm/yy)</label>
-            <input id="expirationdate" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-        <div class="field-container">
-            <label for="securitycode">Security Code</label>
-            <input id="securitycode" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-        <div class="field-container">
-            <button type="button" class="btn btn-primary" onclick="Pay()">Pay</button>
-        </div>
-        @Html.HiddenFor(model => model.OrderID)
-        @Html.HiddenFor(model => model.TotalAmount)
-        @Html.HiddenFor(model => model.CardToken)
-
+     <div class="field-container">
+         <label for="name">Name</label>
+         <!--<input id="name" maxlength="20" type="text">-->
+         @Html.TextBoxFor(model => model.name, new { pattern = "[0-9]*", inputmode = "numeric" })
+     </div>
+    <div class="field-container">
+        <label for="cardnumber">Card Number</label><span id="generatecard">generate random</span>
+        <!--<input id="cardnumber" type="text" pattern="[0-9]*" inputmode="numeric">-->
+        @Html.TextBoxFor(model => model.cardnumber, new { pattern = "[0-9]*", inputmode = "numeric" })
+        <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+        </svg>
     </div>
+    <div class="field-container">
+        <label for="expirationdate">Expiration (mm/yy)</label>
+        <!--<input id="expirationdate" type="text" pattern="[0-9]*" inputmode="numeric">-->
+        @Html.TextBoxFor(model => model.expirationdate, new { pattern = "[0-9]*", inputmode = "numeric" })       
+    </div>
+    <div class="field-container">
+        <label for="securitycode">Security Code</label>
+        <input id="securitycode" type="text" pattern="[0-9]*" inputmode="numeric">
+    </div>
+    <div class="field-container">
+        <button type="button" class="btn btn-primary" onclick="Pay()">Pay</button>
+    </div>
+    @Html.HiddenFor(model => model.SelectedDeliveryOption)
+    @Html.HiddenFor(model => model.LineAddress1)
+    @Html.HiddenFor(model => model.LineAddress2)
+    @Html.HiddenFor(model => model.City)
+    @Html.HiddenFor(model => model.ZipCode)
+    @Html.HiddenFor(model => model.OrderID)
+    @Html.HiddenFor(model => model.TotalAmount)
+    @Html.HiddenFor(model => model.CardToken)
+   
+</div>
 }
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js'></script>
@@ -297,6 +305,7 @@
                 //Charge(token_id);
                 popupModal.closePopup();
                 alert('Payment ok');
+                
                 $("form").submit();
             },
             onFailure: function (response) {

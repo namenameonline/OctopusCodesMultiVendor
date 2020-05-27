@@ -28,6 +28,8 @@
     <!-- fav and touch icons -->
     <link rel="shortcut icon" href="~/Content/User/themes/images/ico/favicon.ico">
     <link href="~/Content/User/themes/css/ajaxloading.css" rel="stylesheet" media="screen" />
+    <link rel="stylesheet" href="~/Content/User/themes/css/chat.css">
+
     <!-- Placed at the end of the document so the pages load faster ============================================= -->
     <script src="~/Content/User/themes/js/jquery.js" type="text/javascript"></script>
     <script src="~/Content/User/themes/js/bootstrap.min.js" type="text/javascript"></script>
@@ -35,6 +37,9 @@
     <script src="~/Content/User/themes/js/ajaxloading.js"></script>
     <script src="~/Content/User/themes/js/bootshop.js"></script>
     <script src="~/Content/User/themes/js/jquery.lightbox-0.5.js"></script>
+    <script src="~/Content/User/themes/js/accounting.min.js"></script>
+    <script src="~/Content/User/themes/js/accountingjs-setup.js"></script>
+
 </head>
 <body>
     <div id="header">
@@ -53,9 +58,9 @@
                                 totalItem = cart.Count;
                             }
                         }
-                        <span class="btn btn-mini">@total.ToString("c")</span>
+                        <span class="btn btn-mini" id="total">@total.ToString("c")</span>
 
-                        <a href="@Url.Action("Index", "Cart")"><span class="btn btn-mini btn-primary"><i class="icon-shopping-cart icon-white"></i> [ @totalItem ] @Resources.UserTemplate.Itemes_in_your_cart </span> </a>
+                        <a href="@Url.Action("Index", "Cart")"><span class="btn btn-mini btn-primary"><i class="icon-shopping-cart icon-white"></i> <span id="totalitem">@totalItem</span> @Resources.UserTemplate.Itemes_in_your_cart </span> </a>
                     </div>
                 </div>
             </div>

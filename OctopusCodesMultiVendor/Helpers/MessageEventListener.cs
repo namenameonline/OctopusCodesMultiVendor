@@ -21,7 +21,7 @@ namespace OctopusCodesMultiVendor.Helpers
         string connectionString;
         MessageEvents messageEventHandler;
         Guid filterMessageId;
-        public void Initialize(OctopusCodesMultiVendorsEntities entity,MessageEvents handler, Guid msgId)
+        public void Initialize(OctopusCodesMultiVendorsEntities entity, MessageEvents handler, Guid msgId)
         {
             // The mapper object is used to map model properties 
             // that do not have a corresponding table column name.
@@ -35,23 +35,24 @@ namespace OctopusCodesMultiVendor.Helpers
             string connectionString = ConfigurationManager.ConnectionStrings["OctopusCodesMultiVendorsEntities"].ConnectionString;
 
             Expression<Func<MessageDetail, bool>> expression = p =>
-            (p.MessageHeaderId==filterMessageId);
+            (p.MessageHeaderId == filterMessageId);
             ITableDependencyFilter whereCondition = new SqlTableDependencyFilter<MessageDetail>(
                expression,
                mapper);
-            SqlTableDependency<MessageDetail> dep = new SqlTableDependency<MessageDetail>(connectionString, "MessageDetail", mapper: mapper, whereCondition);
-                filterMessageId = msgId;
+            SqlTableDependency<MessageDetail> dep = new SqlTableDependency<MessageDetail>(connectionString, "MessageDetail",filter:whereCondition);
+            filterMessageId = msgId;
 
 
-                dep.OnChanged += Changed;
-                dep.Start();
-                dep.Stop();
-                 
+            dep.OnChanged += Changed;
+            dep.Start();
+            dep.Stop();
+
         }
         public void Changed(object sender, RecordChangedEventArgs<MessageDetail> e)
         {
             var changedEntity = e.Entity;
-            if(e.ChangeType==TableDependency.SqlClient.Base.Enums.ChangeType.Insert)
-                messageEventHandler.OnNewMessageReceived(changedEntity.DateCreation,changedEntity.Body,changedEntity.Sender);
+            if (e.ChangeType == TableDependency.SqlClient.Base.Enums.ChangeType.Insert)
+                messageEventHandler.OnNewMessageReceived(changedEntity.DateCreation, changedEntity.Body, changedEntity.Sender);
         }
     }
+}

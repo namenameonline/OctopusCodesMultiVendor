@@ -12,7 +12,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Http;
 using RestSharp;
 using Newtonsoft.Json;
 using OctopusCodesMultiVendor.Paypal;
@@ -20,6 +19,7 @@ using System.Web.Configuration;
 using System.Text;
 using System.IO;
 using System.Net;
+using OctopusCodesMultiVendor.Models.ViewModels.Cart;
 
 namespace OctopusCodesMultiVendor.Controllers
 {
@@ -100,7 +100,7 @@ namespace OctopusCodesMultiVendor.Controllers
                         option.Name = deliveryDesc;
                         Detail detail = new Detail();
                         detail.Etd = cost.Cost[0].Etd;
-                        detail.fee += cost.Cost[0].Value;
+                        detail.totalfee += cost.Cost[0].Value;
                         detail.Vendorid = vendorID.ToString();
                         option.Detail.Add(detail);
                         deliveryOptionJson.DeliveryOption.Add(option);
@@ -115,14 +115,14 @@ namespace OctopusCodesMultiVendor.Controllers
                         {
                             detail = new Detail();
                             detail.Etd = cost.Cost[0].Etd;
-                            detail.fee = cost.Cost[0].Value;
+                            detail.totalfee = cost.Cost[0].Value;
                             detail.Vendorid = vendorID.ToString();
                             option.Detail.Add(detail);
                         }
                         else
                         {
                             detail.Etd = cost.Cost[0].Etd;
-                            detail.fee+= cost.Cost[0].Value;
+                            detail.totalfee+= cost.Cost[0].Value;
                         }
 
                     }
@@ -236,11 +236,18 @@ namespace OctopusCodesMultiVendor.Controllers
             List<Item> cart = (List<Item>)Session["cart"];
             DeliveryOptionJson deliveryOptionJson= (DeliveryOptionJson)Session["DeliveryOptionJson"];
             DeliveryOption deliverySelected = deliveryOptionJson.DeliveryOption.FirstOrDefault(a => a.Name.Equals(model.SelectedDeliveryOption));
-            ViewBag.OrderName = account.Username +"-"+Guid.NewGuid().ToString();
+            ViewBag.OrderName = Guid.NewGuid().ToString();
             ViewBag.TotalAmount= cart.Sum(i => i.product.Price * i.quantity) + deliverySelected.Totalfee;
             model.OrderID = ViewBag.OrderName;
-            model.TotalAmount = ViewBag.TotalAmount;            
-            Session["CartViewModel"] = model;
+            model.TotalAmount = decimal.Truncate(ViewBag.TotalAmount);
+            AccountPaymentInfo accountPaymentInfo = account.AccountPaymentInfoes.FirstOrDefault();
+            if(accountPaymentInfo!=null)
+            {
+                model.name = accountPaymentInfo.FullName;
+                model.cardnumber = accountPaymentInfo.CreditCardNo;
+                model.expirationdate = accountPaymentInfo.ExpiryDate;
+            }
+            //Session["CartViewModel"] = model;
 
             return View(model);
         }
@@ -286,11 +293,11 @@ namespace OctopusCodesMultiVendor.Controllers
      
 
         [HttpPost]        
-        public async Task<ActionResult> Charge()
+        public async Task<ActionResult> Charge(CartViewModel model)
         {
             try
             {
-                    CartViewModel model = (CartViewModel)Session["CartViewModel"];
+                    //CartViewModel model = (CartViewModel)Session["CartViewModel"];
                     DeliveryOptionJson vendorDeliveryOption = (DeliveryOptionJson)Session["DeliveryOptionJson"];
                     DeliveryOption deliveryOption = vendorDeliveryOption.DeliveryOption.FirstOrDefault(a => a.Name.Equals(model.SelectedDeliveryOption));
                     if (SessionPersister.account == null)
@@ -317,7 +324,10 @@ namespace OctopusCodesMultiVendor.Controllers
                                     DateCreation = DateTime.Now,
                                     Name = Resources.Vendor.New_Order_for_Vendor + " " + currentVendor.Name,
                                     OrderStatusId = 1,
-                                    VendorId = id
+                                    VendorId = id,                                    
+                                    PaymentStatusId = ocmde.PaymentStatus.Find(2).Id,
+                                    PaymentReference=model.OrderID
+                                    
                                 };
                                 if (order.OrderAddresses.Count <= 0)
                                 {
@@ -348,6 +358,7 @@ namespace OctopusCodesMultiVendor.Controllers
                                     //ocmde.SaveChanges();
                                     
                                 });
+                                //VendorPayment
                                 VendorPendingPayment vendorPayment = new VendorPendingPayment();
                                 vendorPayment.Order = order;
                                 vendorPayment.OrderId = order.Id;
@@ -355,13 +366,45 @@ namespace OctopusCodesMultiVendor.Controllers
                                 vendorPayment.Vendor = currentVendor;
                                 vendorPayment.VendorId = currentVendor.Id;
                                 vendorPayment.MerchandiseAmount = merchandiseAmtSum;
-                                vendorPayment.DeliveryFee = deliveryOption.Detail.FirstOrDefault(a => a.Vendorid == currentVendor.Id.ToString()).fee;
+                                vendorPayment.DeliveryFee = deliveryOption.Detail.FirstOrDefault(a => a.Vendorid == currentVendor.Id.ToString()).totalfee;
                                 ocmde.VendorPendingPayments.Add(vendorPayment);
+
+                                //VendorDelivery
+                                VendorPendingDelivery vendorPendingDelivery = new VendorPendingDelivery();
+                                vendorPendingDelivery.Order = order;
+                                vendorPendingDelivery.DeliveryOrderId = Guid.NewGuid();
+                                vendorPendingDelivery.Vendor = currentVendor;
+                                vendorPendingDelivery.VendorId = currentVendor.Id;
+                                vendorPendingDelivery.EstimatedDeliveredDays = deliveryOption.Detail.FirstOrDefault(a=>a.Vendorid==currentVendor.Id.ToString()).Etd;
+                                //vendorPendingDelivery.EstimatedDeliveredDate = DateTime.Now.AddDays(DeliveryHelper.GetLatestDays(vendorPendingDelivery.EstimatedDeliveredDays));
+                                ocmde.VendorPendingDeliveries.Add(vendorPendingDelivery);
+                                string body = string.Format(SettingsHelper.NewOrder_Content, customer.FullName, SettingsHelper.BASE_URL + "/Vendor/Login");
+
+                                //Send Email to vendor for each order
+                                EmailHelper.SendEmail(SettingsHelper.Email_Sender, currentVendor.Email, SettingsHelper.NewOrder_Subject, body, null);
                                 ocmde.SaveChanges();
                             });
                             //Make Payment to Vendor
-
-
+                            //Save Payment info
+                            Account dbAccount = (Account)account;
+                            if (dbAccount.AccountPaymentInfoes.Count <= 0)
+                            {
+                                AccountPaymentInfo paymentInfo = new AccountPaymentInfo();
+                                paymentInfo.CreditCardNo = model.cardnumber;
+                                paymentInfo.ExpiryDate = model.expirationdate;
+                                paymentInfo.FullName = model.name;
+                                //paymentInfo.Id = Guid.NewGuid();
+                                dbAccount.AccountPaymentInfoes.Add(paymentInfo);
+                            }
+                            else
+                            {
+                                AccountPaymentInfo acctPaymentOriginal = dbAccount.AccountPaymentInfoes.FirstOrDefault();
+                                acctPaymentOriginal.CreditCardNo = model.cardnumber;
+                                acctPaymentOriginal.ExpiryDate = model.expirationdate;
+                                acctPaymentOriginal.FullName = model.name;
+                            }
+                           
+                            ocmde.SaveChanges();
                             // Remove Cart
                             Session.Remove("Cart");
                             Session.Remove("DeliveryOptionJson");
@@ -377,6 +420,6 @@ namespace OctopusCodesMultiVendor.Controllers
             }
             return RedirectToAction("Index", "Login", new { Area = "Customer" });
         }
-
+       
     }
 }

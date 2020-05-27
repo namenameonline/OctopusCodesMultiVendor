@@ -21,8 +21,10 @@ namespace OctopusCodesMultiVendor.Models
         public int CustomerId { get; set; }
         public int VendorId { get; set; }
         public bool Status { get; set; }
+        public int Sender { get; set; }
     
         public virtual Account Account { get; set; }
         public virtual Vendor Vendor { get; set; }
+        public virtual MessageSenderType MessageSenderType { get; set; }
     }
 }
