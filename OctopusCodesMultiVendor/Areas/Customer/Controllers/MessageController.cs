@@ -101,6 +101,7 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 messageDetail.DateCreation = DateTime.Now;
                 messageDetail.Body = message.Body;
                 messageDetail.Status = true;
+                messageDetail.Sender = (int)SenderType.Customer;
                 mh.MessageDetails.Add(messageDetail);
                 if (newconversation)
                     ocmde.MessageHeaders.Add(mh);
