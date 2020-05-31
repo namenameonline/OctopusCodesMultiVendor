@@ -192,7 +192,8 @@
                         }
                     </ul>
 
-                    @if (Request.Url.Segments.Length >= 2 && Request.Url.Segments[1].ToString().Trim().StartsWith("Vendors") && !Request.Url.Segments[2].ToString().Trim().StartsWith("MemberShip") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Register") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Success") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Expires"))
+                    @*@if (Request.Url.Segments.Length >= 2 && Request.Url.Segments[1].ToString().Trim().StartsWith("Vendors") && !Request.Url.Segments[2].ToString().Trim().StartsWith("MemberShip") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Register") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Success") && !Request.Url.Segments[2].ToString().Trim().StartsWith("Expires"))*@
+                        @if(ViewBag.vendor!=null)
                     {
                         <hr class="soft">
                         <h4>@Resources.Vendor.Categories_Vendor</h4>
@@ -228,12 +229,12 @@
                         var lastVendors = new List<Vendor>();
                         ocmde.Vendors.Where(v => v.Status).ToList().ForEach(v =>
                         {
-                            if (VendorHelper.checkExpires(v.Id))
+                            if (VendorHelper.IsValid(v.Id))
                             {
                                 lastVendors.Add(v);
                             }
                         });
-                        
+
                     }
                     @if (lastVendors != null)
                     {

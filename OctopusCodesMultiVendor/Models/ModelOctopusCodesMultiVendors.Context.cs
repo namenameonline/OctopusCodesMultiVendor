@@ -26,32 +26,35 @@ namespace OctopusCodesMultiVendor.Models
         }
     
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<AccountAddress> AccountAddresses { get; set; }
+        public virtual DbSet<AccountPaymentInfo> AccountPaymentInfoes { get; set; }
+        public virtual DbSet<BankList> BankLists { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<ForgetPassword> ForgetPasswords { get; set; }
         public virtual DbSet<MemberShip> MemberShips { get; set; }
         public virtual DbSet<MemberShipVendor> MemberShipVendors { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
+        public virtual DbSet<MessageDetail> MessageDetails { get; set; }
+        public virtual DbSet<MessageHeader> MessageHeaders { get; set; }
+        public virtual DbSet<MessageSenderType> MessageSenderTypes { get; set; }
+        public virtual DbSet<OrderAddress> OrderAddresses { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrdersDetail> OrdersDetails { get; set; }
         public virtual DbSet<OrderStatu> OrderStatus { get; set; }
         public virtual DbSet<Page> Pages { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<PaymentStatu> PaymentStatus { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<RajaOngkir_CityMapping> RajaOngkir_CityMapping { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
-        public virtual DbSet<ForgetPassword> ForgetPasswords { get; set; }
-        public virtual DbSet<AccountAddress> AccountAddresses { get; set; }
-        public virtual DbSet<OrderAddress> OrderAddresses { get; set; }
         public virtual DbSet<VendorAddress> VendorAddresses { get; set; }
-        public virtual DbSet<RajaOngkir_CityMapping> RajaOngkir_CityMapping { get; set; }
-        public virtual DbSet<VendorPendingPayment> VendorPendingPayments { get; set; }
-        public virtual DbSet<PaymentStatu> PaymentStatus { get; set; }
-        public virtual DbSet<AccountPaymentInfo> AccountPaymentInfoes { get; set; }
+        public virtual DbSet<VendorPayment> VendorPayments { get; set; }
         public virtual DbSet<VendorPaymentInfo> VendorPaymentInfoes { get; set; }
         public virtual DbSet<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
-        public virtual DbSet<MessageSenderType> MessageSenderTypes { get; set; }
-        public virtual DbSet<MessageDetail> MessageDetails { get; set; }
-        public virtual DbSet<MessageHeader> MessageHeaders { get; set; }
+        public virtual DbSet<VendorPendingPayment> VendorPendingPayments { get; set; }
+        public virtual DbSet<RewardsPoint> RewardsPoints { get; set; }
     }
 }

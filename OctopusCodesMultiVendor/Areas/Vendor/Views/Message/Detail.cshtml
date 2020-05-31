@@ -5,54 +5,53 @@
 @using OctopusCodesMultiVendor.Helpers
 @model OctopusCodesMultiVendor.Models.ViewModels.Messages.MessageDetailViewModel
 
-    <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-header">
-                        <h3 class="box-title">Messages</h3>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Messages</h3>
+                </div>
+                <!-- /.box-header -->
+                @if (TempData["error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        @TempData["error"]
                     </div>
-                    <!-- /.box-header -->
-                    @if (TempData["error"] != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible">
-                            @TempData["error"]
-                        </div>
-                    }
-                    <div class="box-body">
-                        <div
-                             >
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table>
+                }
+                <div class="box-body">
+                    <div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="discussion">
 
-                                        @foreach (var message in ViewBag.messages)
-                                        {
-                                            if (message.Sender == (int)SenderType.Vendor)
-                                            {
-                                                
-
-                                                <div class="chatcontainer darker">
-                                                    <img src="~/Content/User/Images/@ViewBag.myphoto" alt="Avatar" class="right">
-                                                    <p>@message.Body</p>
-                                                    <span class="time-right">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
-                                                </div>
-
-                                            }
-                                            else
-                                            {
-                                                <div class="chatcontainer">
-                                                    <img src="~/Content/User/Images/@ViewBag.senderphoto" alt="Avatar">
-                                                    <p>@message.Body</p>
-                                                    <span class="time-left">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
-                                                </div>
-                                            }
-                                        }
-                                    </table>
-                                    <h3>Send Messages to </h3>
-                                    <hr class="soft">
-                                    @using (Html.BeginForm("SendMessage", "Message", FormMethod.Post, new { @class = "form-inline" }))
+                                    @foreach (var message in ViewBag.messages)
                                     {
+                                        if (message.Sender == (int)SenderType.Vendor)
+                                        {
+
+
+                                            <div class="chatcontainer darker">
+                                                <img src="~/Content/User/Images/@ViewBag.myphoto" alt="Avatar" class="left">
+                                                <p>@message.Body</p>
+                                                <span class="time-left">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                            </div>
+
+                                        }
+                                        else
+                                        {
+                                            <div class="chatcontainer">
+                                                <img src="~/Content/User/Images/@ViewBag.senderphoto" alt="Avatar" class="right">
+                                                <p>@message.Body</p>
+                                                <span class="time-right">@message.DateCreation.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <h3>Send Messages to </h3>
+                                <hr class="soft">
+                                @using (Html.BeginForm("SendMessage", "Message", FormMethod.Post, new { @class = "form-inline" }))
+                                {
                                     <fieldset>
                                         @TempData["message"]
 
@@ -60,33 +59,101 @@
                                         <div class="chatcontainer">
                                             <label for="textarea">Content</label>
                                             <br />
-                                            @Html.TextAreaFor(model => model.Body, new { @class = "form-control", placeholder = "Body", cols = "60" })
+                                            @Html.TextAreaFor(model => model.Body, new { @class = "mceNoEditor", placeholder = "Body", cols = "60" })
                                         </div>
-
+                                        @Html.HiddenFor(model => model.recipient)
                                         @Html.HiddenFor(model => model.SendTo)
                                         @Html.HiddenFor(model => model.SenderType)
-                                        <button type="submit" class="btn btn-primary">Send</button>
+                                        <button type="button" class="btn btn-primary" id="sendmessage">Send</button>
 
                                     </fieldset>
-                                    }
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
-                    <!-- /.box-body -->
                 </div>
-                <!-- /.box -->
+                <!-- /.box-body -->
             </div>
-            <!-- /.col -->
+            <!-- /.box -->
         </div>
-        <!-- /.row -->
-       
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
 
-    </section>
+
+</section>
 <script>
     $(document).ready(function () {
         tinymce.remove('#Body');
         tinymce.remove('textarea');
     });
+</script>
+<script type="text/javascript">
+    $(function () {
+        // Declare a proxy to reference the hub.
+        var chat = $.connection.MessageHub;
+        // Create a function that the hub can call to broadcast messages.
+        chat.client.SendMessage = function (name, dtCreated, message,sender) {
+            console.log("name:" + name + "message:" + message + "from:" + sender);
+            // Html encode display name and message.
+            if (sender != $('#recipient').val())
+                return;
+            // Add the message to the page.
+            $('#discussion').append("<div class='chatcontainer'>" +
+                "<img src='/Content/User/Images/no-logo.jpg' alt='Avatar' class='right'>" +
+                "<p>" + message + "</p><span class='time-left'>" + dtCreated + "</span></div >"
+            );
+        };
+
+        // Start the connection.
+        $('#sendmessage').click(function () {
+            // Call the Send method on the hub.
+            chat.server.sendMessage($('#recipient').val(), formatDate(new Date()), $('#Body').val(),'@OctopusCodesMultiVendor.Security.SessionPersister.CurrentUserName');
+            AddMessage();
+        });
+    });
+    function AddMessage() {
+        var msgData = {
+            "SendTo": $('#SendTo').val(),
+            "recipientEmail": $('#recipientEmail').val(),
+            "SenderType": $('#SenderType').val(),
+            "Body": $('#Body').val(),
+        };
+        var myData = {};
+        myData.msgData = msgData;
+        $.ajax(
+            {
+                url: "/api/MessageApi/AddMessage", // be consistent and case the route the same as the ApiController
+                type: "POST",
+                dataType: "json",
+                data: myData,
+                beforeSend: function () {
+                    // Show image container
+                    $("#loading-overlay").show();
+                },
+                success: function (result) {
+                    var res = result.split(';');
+                    if (res[0] == 'OK') {
+                        $('#discussion').append("<div class='chatcontainer darker'>" +
+                            "<img src='/Content/User/Images/no-logo.jpg' alt='Avatar' class='left'>" +
+                            "<p>" + $('#Body').val() + "</p><span class='time-left'>" + formatDate(new Date()) + "</span></div >"
+                        );
+                    } else {
+                        alert('Not ok');
+                    }
+
+
+                    console.log(result);
+                },
+                error: function (xhr, status, p3, p4) {
+
+                    console.log(err);
+                },
+                complete: function (data) {
+                    // Hide image container
+                    $("#loading-overlay").hide();
+                }
+            });
+    }
 </script>
 

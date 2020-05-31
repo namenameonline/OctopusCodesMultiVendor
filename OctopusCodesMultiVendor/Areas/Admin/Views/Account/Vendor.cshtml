@@ -38,35 +38,39 @@
                                             <th class="no-sort">Phone</th>
                                             <th class="no-sort">MemberShip</th>
                                             <th class="no-sort">Status</th>
+                                            <th class="no-sort">BankStatus</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var vendor in ViewBag.vendors)
                                         {
-                                            <tr>
-                                                <td>@vendor.Id</td>
-                                                <td>@vendor.Username</td>
-                                                <td>@vendor.Name</td>
-                                                <td>
-                                                    <img src="~/Content/User/Images/@vendor.Logo" width="50" />
-                                                </td>
-                                                
-                                                <td>
-                                                    @foreach (var address in vendor.VendorAddresses)
-                                                    {
-                                                        @Html.Raw(
-                                                       @AddressHelper.GetFullAddress(address.LineAddress1, address.LineAddress2, address.City, address.ZipCode))
-                                                    }
-                                                </td>
-                                                <td>@vendor.Email</td>
-                                                <td>@vendor.Phone</td>
-                                                <td>
-                                                    <a href="@Url.Action("Membership", "Account", new { id = vendor.Id })">Orders List</a>
-                                                </td>
-                                                <td>
-                                                    <a href="@Url.Action("StatusVendor", "Account", new { id = vendor.Id })">@(vendor.Status ? "Active" : "InActive")</a>
-                                                </td>
-                                            </tr>
+                                        <tr>
+                                            <td>@vendor.Id</td>
+                                            <td>@vendor.Username</td>
+                                            <td>@vendor.Name</td>
+                                            <td>
+                                                <img src="~/Content/User/Images/@vendor.Logo" width="50" />
+                                            </td>
+
+                                            <td>
+                                                @foreach (var address in vendor.VendorAddresses)
+                                                {
+                                                    @Html.Raw(
+                                                   @AddressHelper.GetFullAddress(address.LineAddress1, address.LineAddress2, address.City, address.ZipCode))
+                                                }
+                                            </td>
+                                            <td>@vendor.Email</td>
+                                            <td>@vendor.Phone</td>
+                                            <td>
+                                                <a href="@Url.Action("Membership", "Account", new { id = vendor.Id })">Orders List</a>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("StatusVendor", "Account", new { id = vendor.Id })">@(vendor.Status ? "Active" : "InActive")</a>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("BankStatusVendor", "Account", new { id = vendor.Id })">@(vendor.BankStatus ? "Active" : "InActive")</a>
+                                            </td>
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>

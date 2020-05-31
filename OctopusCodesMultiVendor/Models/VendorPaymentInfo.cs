@@ -14,11 +14,11 @@ namespace OctopusCodesMultiVendor.Models
     
     public partial class VendorPaymentInfo
     {
-        public int Id { get; set; }
-        public string CreditCardNo { get; set; }
-        public string FullName { get; set; }
-        public string ExpiryDate { get; set; }
         public int VendorId { get; set; }
+        public string Name { get; set; }
+        public string Bank { get; set; }
+        public string AccountNo { get; set; }
+        public System.Guid Id { get; set; }
     
         public virtual Vendor Vendor { get; set; }
     }

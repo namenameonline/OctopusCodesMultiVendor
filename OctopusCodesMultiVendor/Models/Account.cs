@@ -17,13 +17,14 @@ namespace OctopusCodesMultiVendor.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Account()
         {
-            this.Messages = new HashSet<Message>();
-            this.Orders = new HashSet<Order>();
-            this.Reviews = new HashSet<Review>();
             this.AccountAddresses = new HashSet<AccountAddress>();
             this.AccountPaymentInfoes = new HashSet<AccountPaymentInfo>();
+            this.Messages = new HashSet<Message>();
             this.MessageHeaders = new HashSet<MessageHeader>();
             this.MessageHeaders1 = new HashSet<MessageHeader>();
+            this.Orders = new HashSet<Order>();
+            this.Reviews = new HashSet<Review>();
+            this.RewardsPoints = new HashSet<RewardsPoint>();
         }
     
         public int Id { get; set; }
@@ -37,18 +38,20 @@ namespace OctopusCodesMultiVendor.Models
         public bool IsAdmin { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountAddress> AccountAddresses { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountPaymentInfo> AccountPaymentInfoes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Message> Messages { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MessageHeader> MessageHeaders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MessageHeader> MessageHeaders1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Review> Reviews { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountAddress> AccountAddresses { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountPaymentInfo> AccountPaymentInfoes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MessageHeader> MessageHeaders { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MessageHeader> MessageHeaders1 { get; set; }
+        public virtual ICollection<RewardsPoint> RewardsPoints { get; set; }
     }
 }

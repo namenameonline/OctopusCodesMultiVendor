@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutPage.cshtml";
+}
+
+@using OctopusCodesMultiVendor.Models;
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Orders</h3>
+                </div>
+                <!-- /.box-header -->
+                @if (TempData["error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        @TempData["error"]
+                    </div>
+                }
+                <div class="box-body">
+                    <div id="example1_wrapper"
+                         class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example1"
+                                       class="table table-bordered table-striped dataTable">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="no-sort">Id</th>
+                                            <th class="no-sort">Vendor</th>
+                                            <th class="no-sort">Order Id</th>
+                                            <th class="no-sort">Bank</th>
+                                            <th class="no-sort">Name</th>
+                                            <th class="no-sort">Account No</th>
+                                            <th class="no-sort">Amount</th>
+                                            <th class="no-sort">Status</th>
+                                            <th class="no-sort">Update To Paid</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var payment in ViewBag.payments)
+                                        {
+                                        <tr>
+                                            <td>@payment.Id</td>
+                                            <td>@payment.Vendor.Name</td>
+                                            <td>@payment.OrderId</td>
+                                            <td>@payment.Bank</td>
+                                            <td>@payment.Name</td>
+                                            <td>@payment.AccountNo</td>
+                                            <td>@payment.Amount</td>
+                                            <td>
+                                                @{
+                                                    if (payment.Status != 2)
+                                                    {
+                                                        @Url.Action("UpdatePaid", new { Id = payment.Id })
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>

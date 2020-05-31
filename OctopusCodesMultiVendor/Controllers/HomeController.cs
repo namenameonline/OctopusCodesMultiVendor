@@ -16,13 +16,11 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
-                //var key = "12345678901234567890123456789012";
-                string encrypted = EncryptHelper.EncryptString(ocmde.Settings.Find(29).Value,"123");
-                string decrypted = EncryptHelper.DecryptString(ocmde.Settings.Find(29).Value, encrypted);
+                
 
                 var products = new List<Product>();
                 ocmde.Vendors.ToList().ForEach(v => {
-                    if (VendorHelper.checkExpires(v.Id))
+                    if (VendorHelper.IsValid(v.Id))
                     {
                         products.AddRange(v.Products);
                     }
@@ -35,7 +33,7 @@ namespace OctopusCodesMultiVendor.Controllers
 
                 var ordersDetails = new List<OrdersDetail>();
                 ocmde.OrdersDetails.ToList().ForEach(od => {
-                    if (VendorHelper.checkExpires(od.Product.VendorId))
+                    if (VendorHelper.IsValid(od.Product.VendorId))
                     {
                         ordersDetails.Add(od);
                     }

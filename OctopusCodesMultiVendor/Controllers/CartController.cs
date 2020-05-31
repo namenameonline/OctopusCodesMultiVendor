@@ -175,7 +175,7 @@ namespace OctopusCodesMultiVendor.Controllers
             try
             {
                 var product = ocmde.Products.Find(id);
-                if (!VendorHelper.checkExpires(product.VendorId))
+                if (!VendorHelper.IsValid(product.VendorId))
                 {
                     return RedirectToAction("Expires", "Product");
                 }
@@ -325,7 +325,6 @@ namespace OctopusCodesMultiVendor.Controllers
                                     Name = Resources.Vendor.New_Order_for_Vendor + " " + currentVendor.Name,
                                     OrderStatusId = 1,
                                     VendorId = id,                                    
-                                    PaymentStatusId = ocmde.PaymentStatus.Find(2).Id,
                                     PaymentReference=model.OrderID
                                     
                                 };
@@ -339,6 +338,7 @@ namespace OctopusCodesMultiVendor.Controllers
                                     oAddr.ZipCode = model.ZipCode;
                                     order.OrderAddresses.Add(oAddr);
                                 }
+                                
                                 ocmde.Orders.Add(order);
                                 //ocmde.SaveChanges();
                                 decimal merchandiseAmtSum = 0;
@@ -378,10 +378,10 @@ namespace OctopusCodesMultiVendor.Controllers
                                 vendorPendingDelivery.EstimatedDeliveredDays = deliveryOption.Detail.FirstOrDefault(a=>a.Vendorid==currentVendor.Id.ToString()).Etd;
                                 //vendorPendingDelivery.EstimatedDeliveredDate = DateTime.Now.AddDays(DeliveryHelper.GetLatestDays(vendorPendingDelivery.EstimatedDeliveredDays));
                                 ocmde.VendorPendingDeliveries.Add(vendorPendingDelivery);
-                                string body = string.Format(SettingsHelper.NewOrder_Content, customer.FullName, SettingsHelper.BASE_URL + "/Vendor/Login");
+                                string body = string.Format(Resources.Email.NewOrder_Content, customer.FullName, SettingsHelper.BASE_URL + "/Vendor/Login");
 
                                 //Send Email to vendor for each order
-                                EmailHelper.SendEmail(SettingsHelper.Email_Sender, currentVendor.Email, SettingsHelper.NewOrder_Subject, body, null);
+                                EmailHelper.SendEmail(SettingsHelper.Email_Sender, currentVendor.Email, Resources.Email.NewOrder_Subject, body, null);
                                 ocmde.SaveChanges();
                             });
                             //Make Payment to Vendor

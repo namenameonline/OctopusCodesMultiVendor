@@ -18,10 +18,15 @@
                 @if (ViewBag.error != null)
                 {
                     <div class="alert alert-danger alert-dismissible">
-                        ViewBag.error
+                        @Html.Raw(ViewBag.error)
                     </div>
                 }
-
+                @if (TempData["error"] != null)
+                {
+                        <div class="alert alert-danger alert-dismissible">
+                            @Html.Raw(TempData["error"])
+                        </div>
+                }
                 @using (Html.BeginForm("Profile", "Login", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
                     <div class="box-body">
@@ -66,41 +71,86 @@
                             </label>
                             @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = "Phone" })
                         </div>
-                       
-                            Address:
-                            <div class="form-group">
-                                <label>
-                                    Line Address 1
-                                </label>
-                                @Html.TextBoxFor(model => model.defaultAddress.LineAddress1, new { @class = "form-control", required = "required", placeholder = "Address Line 1" })
-                                @Html.ValidationMessageFor(model => model.defaultAddress.LineAddress1)
-                            </div>
+
+                        Address:
+                        <div class="form-group">
+                            <label>
+                                Line Address 1
+                            </label>
+                            @Html.TextBoxFor(model => model.defaultAddress.LineAddress1, new { @class = "form-control", required = "required", placeholder = "Address Line 1" })
+                            @Html.ValidationMessageFor(model => model.defaultAddress.LineAddress1)
+                        </div>
 
 
 
-                            <div class="form-group">
-                                <label>
-                                    Line Address 2
-                                </label>
-                                @Html.TextBoxFor(model => model.defaultAddress.LineAddress2, new { @class = "form-control", required = "required", placeholder = "Address Line 2" })
-                                @Html.ValidationMessageFor(model => model.defaultAddress.LineAddress2)
-                            </div>
+                        <div class="form-group">
+                            <label>
+                                Line Address 2
+                            </label>
+                            @Html.TextBoxFor(model => model.defaultAddress.LineAddress2, new { @class = "form-control", required = "required", placeholder = "Address Line 2" })
+                            @Html.ValidationMessageFor(model => model.defaultAddress.LineAddress2)
+                        </div>
 
-                            <div class="form-group">
-                                <label>
-                                    City
-                                </label>
-                                @Html.TextBoxFor(model => model.defaultAddress.City, new { @class = "form-control", required = "required", placeholder = "City" })
-                                @Html.ValidationMessageFor(model => model.defaultAddress.City)
-                            </div>
+                        <div class="form-group">
+                            <label>
+                                City
+                            </label>
+                            <br />
+                            <select name="defaultAddress.City">
+                                @foreach (var city in ViewBag.cities)
+                                {
+                                    string selectedCity = "";
+                                    if (Model.defaultAddress != null)
+                                    {
+                                        selectedCity = Model.defaultAddress.City;
+                                    }
+                                    if (selectedCity == city)
+                                    {
+                                        <option value="@city" selected>@city</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@city">@city</option>
 
-                            <div class="form-group">
-                                <label>
-                                    Zip Code
-                                </label>
-                                @Html.TextBoxFor(model => model.defaultAddress.ZipCode, new { @class = "form-control", required = "required", placeholder = "Zip Code" })
-                                @Html.ValidationMessageFor(model => model.defaultAddress.ZipCode)
-                            </div>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Zip Code
+                            </label>
+                            @Html.TextBoxFor(model => model.defaultAddress.ZipCode, new { @class = "form-control", required = "required", placeholder = "Zip Code" })
+                            @Html.ValidationMessageFor(model => model.defaultAddress.ZipCode)
+                        </div>
+                        Bank Account:
+                        <div class="form-group">
+                            <label>
+                                Name
+                            </label>
+                            @Html.TextBoxFor(model => model.vendorPaymentInfo.Name, new { @class = "form-control", required = "required", placeholder = "Name" })
+                            @Html.ValidationMessageFor(model => model.vendorPaymentInfo.Name)
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label>
+                                Bank Name
+                            </label>
+                            @Html.TextBoxFor(model => model.vendorPaymentInfo.Bank, new { @class = "form-control", required = "required", placeholder = "Bank", @readonly = "readonly", @Value = "BCA" })
+                            @Html.ValidationMessageFor(model => model.vendorPaymentInfo.Bank)
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Account No
+                            </label>
+                            @Html.TextBoxFor(model => model.vendorPaymentInfo.AccountNo, new { @class = "form-control", required = "required", placeholder = "Account No", data_rule_iban = "true" })
+                            @Html.ValidationMessageFor(model => model.vendorPaymentInfo.AccountNo)
+                        </div>
+
                         <div class="form-group">
                             <label for="logo">
                                 Logo

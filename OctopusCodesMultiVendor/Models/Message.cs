@@ -24,7 +24,7 @@ namespace OctopusCodesMultiVendor.Models
         public int Sender { get; set; }
     
         public virtual Account Account { get; set; }
-        public virtual Vendor Vendor { get; set; }
         public virtual MessageSenderType MessageSenderType { get; set; }
+        public virtual Vendor Vendor { get; set; }
     }
 }

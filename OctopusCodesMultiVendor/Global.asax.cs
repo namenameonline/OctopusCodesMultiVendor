@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Web.Routing;
 using System.Web.SessionState;
 using OctopusCodesMultiVendor.Helpers;
+using Microsoft.AspNet.SignalR;
 
 namespace OctopusCodesMultiVendor
 {
@@ -35,8 +36,9 @@ namespace OctopusCodesMultiVendor
             var secretKey = WebConfigurationManager.AppSettings["StripeSecretKey"];
             StripeConfiguration.ApiKey = secretKey;
             SettingsHelper.Initialize(new Models.OctopusCodesMultiVendorsEntities());
-            
 
+            GlobalHost.Configuration.ConnectionTimeout = TimeSpan.FromSeconds(50);
+            GlobalHost.Configuration.KeepAlive = TimeSpan.FromSeconds(5);
         }
         protected void Application_BeginRequest(object sender, EventArgs e)
         {

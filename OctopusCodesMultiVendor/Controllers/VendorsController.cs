@@ -12,6 +12,7 @@ using OctopusCodesMultiVendor.Helpers;
 using System.Data.Entity.Core.Metadata.Edm;
 using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Models.ViewModels.Messages;
+using OctopusCodesMultiVendor.Models.ViewModels.Login;
 
 namespace OctopusCodesMultiVendor.Controllers
 {
@@ -28,7 +29,7 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
-                if (!VendorHelper.checkExpires(id))
+                if (!VendorHelper.IsValid(id))
                 {
                     return RedirectToAction("Expires", "Vendors");
                 }
@@ -56,7 +57,7 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
-                if (!VendorHelper.checkExpires(id))
+                if (!VendorHelper.IsValid(id))
                 {
                     return RedirectToAction("Expires", "Vendors");
                 }
@@ -78,7 +79,7 @@ namespace OctopusCodesMultiVendor.Controllers
                             if (messageHeader.VendorId != vendor.Id)
                                 return View("Error", new HandleErrorInfo(new Exception("Invalid access"), "Vendors", "SendMessage"));
 
-                            ViewBag.messages = messageHeader.MessageDetails.OrderBy(a => a.DateCreation);
+                            return RedirectToAction("Detail", "/Customer/Message", new { Id = messageHeader.MsgId } );
                         }
                         ViewBag.senderphoto = "no-logo.jpg";
                         ViewBag.myphoto = vendor.Logo;
@@ -92,56 +93,121 @@ namespace OctopusCodesMultiVendor.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult SendMessage(MessageDetailViewModel message)
+        [HttpGet]
+        public ActionResult Forget()
         {
             try
             {
-                var customer = (OctopusCodesMultiVendor.Models.Account)SessionPersister.account;
-                MessageHeader mh = ocmde.MessageHeaders.FirstOrDefault(a => a.CustomerId == customer.Id&&a.VendorId==message.SendTo);
-                bool newconversation = false;
-                if(mh==null)
-                {
-                    mh = new MessageHeader();
-                    newconversation = true;
-                    mh.MsgId = Guid.NewGuid();
-                    mh.VendorId =message.SendTo;
-                    mh.CustomerId = customer.Id;
-                    mh.SenderType = (int)SenderType.Customer;
-                }
-                mh.LastMessage = message.Body;
-                mh.LastUpdated = DateTime.Now;
-                MessageDetail messageDetail = new MessageDetail();
-                messageDetail.Id = Guid.NewGuid();
-                messageDetail.DateCreation = DateTime.Now;
-                messageDetail.Body = message.Body;
-                messageDetail.Status = true;
-                messageDetail.Sender = (int)SenderType.Customer;
-                mh.MessageDetails.Add(messageDetail);
-                if(newconversation)
-                    ocmde.MessageHeaders.Add(mh);
-                ocmde.SaveChanges();
-                string body =string.Format(SettingsHelper.Cust_SendMsg_Content,customer.FullName,message.Body,
-                    EncryptHelper.EncryptString(SettingsHelper.Encryption_Key, mh.VendorId.ToString())
-                   
-                    );
-                string vendorEmail = ocmde.Vendors.Find(mh.VendorId).Email;
-                EmailHelper.SendEmail(SettingsHelper.Email_Sender, vendorEmail, SettingsHelper.Cust_SendMsg_Subject, body, null);
-                TempData["message"] = Resources.Vendor.messages_sent_success;
-                return RedirectToAction("SendMessage");
+                return View("Forget", new ForgetPasswordViewModel());
             }
             catch (Exception e)
             {
-                return View("Error", new HandleErrorInfo(e, "Vendors", "SendMessage"));
+                return View("Error", new HandleErrorInfo(e, "Customers", "Forget"));
             }
         }
+        private string ExistsEmail(string email)
+        {
+
+            Vendor acct = ocmde.Vendors.FirstOrDefault(a => a.Email.Equals(email));
+            if (acct != null)
+                return acct.Email;
+
+            return "";
+
+        }
+        [HttpPost]
+        public ActionResult Forget(ForgetPasswordViewModel account)
+        {
+            try
+            {
+                string email = "";
+                if (!string.IsNullOrEmpty(account.Email))
+                {
+                    email = ExistsEmail(account.Email);
+                    if (string.IsNullOrEmpty(email))
+                    {
+                        ViewBag.errorMessage = "Invalid Account";
+                        return View("Forget", account);
+                    }
+                }
+
+                Vendor dbAccount = ocmde.Vendors.FirstOrDefault(a => a.Email.Equals(email));
+                ocmde.ForgetPasswords.RemoveRange(ocmde.ForgetPasswords.Where(a => a.Username.Equals(dbAccount.Username)));
+                ForgetPassword forgetPassword = new ForgetPassword();
+                forgetPassword.Id = Guid.NewGuid();
+                forgetPassword.Username = dbAccount.Username;
+                ocmde.ForgetPasswords.Add(forgetPassword);
+                ocmde.SaveChanges();
+                string body = string.Format(Resources.Email.Forget_Pwd_Content, SettingsHelper.BASE_URL + "/Vendors/Reset/" + forgetPassword.Id.ToString());
+                //string body = string.Format(ocmde.Settings.Find(22).Value, "/Customer/Reset/" + forgetPassword.Id.ToString()); ;
+                //TODO:
+                //Send email to the account for reset
+
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, account.Email, Resources.Email.Forget_Pwd_Subject, body, null);
+                ViewBag.infoMessage = "Please check your email for the password reset link";
+                return View("Forget", account);
+            }
+            catch (Exception e)
+            {
+                return View("Error", new HandleErrorInfo(e, "Customers", "Register"));
+            }
+        }
+        [HttpGet]
+        public ActionResult Reset(string guid)
+        {
+            try
+            {
+                ForgetPassword pwd = ocmde.ForgetPasswords.Find(guid);
+                if (pwd == null)
+                {
+                    ViewBag.errorMessage = "The Link can't be found";
+                    return View("Reset");
+                }
+                return View("Reset", new ResetPasswordModel());
+            }
+            catch (Exception e)
+            {
+                return View("Error", new HandleErrorInfo(e, "Customers", "Reset"));
+            }
+        }
+        [HttpPost]
+        public ActionResult Reset(ResetPasswordModel resetPassword)
+        {
+            try
+            {
+                string email = "";
+                ForgetPassword fp = ocmde.ForgetPasswords.Find(resetPassword.Id);
+                if (fp == null)
+                {
+                    ViewBag.errorMessage = "Link can't be found";
+                    return View("Reset");
+                }
+                Vendor acct = ocmde.Vendors.FirstOrDefault(a => a.Username == fp.Username);
+                if (acct == null)
+                {                    
+                    ViewBag.errorMessage = "Link can't be found";
+                    return View("Reset");
+                }
+                //successful update
+                acct.Password = BCrypt.Net.BCrypt.HashPassword(resetPassword.Password);
+                ocmde.ForgetPasswords.Remove(fp);
+                ocmde.SaveChanges();
+                ViewBag.infoMessage = "You have successfully reset your password";
+                return RedirectToAction("Login", "Vendor");
+            }
+            catch (Exception e)
+            {
+                return View("Error", new HandleErrorInfo(e, "Customers", "Register"));
+            }
+        }
+
 
         [HttpGet]
         public ActionResult GiveReview(int id)
         {
             try
             {
-                if (!VendorHelper.checkExpires(id))
+                if (!VendorHelper.IsValid(id))
                 {
                     return RedirectToAction("Expires", "Vendors");
                 }
@@ -202,7 +268,7 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
-                if (!VendorHelper.checkExpires(vendorId))
+                if (!VendorHelper.IsValid(vendorId))
                 {
                     return RedirectToAction("Expires", "Vendors");
                 }
@@ -262,7 +328,10 @@ namespace OctopusCodesMultiVendor.Controllers
                 {
                     ModelState.AddModelError("Username", Resources.Vendor.Username_already_exists);
                 }
-
+                if (vendor.Username != null && ExistsAccount(vendor.Username))
+                {
+                    ModelState.AddModelError("Username", Resources.Vendor.Username_already_exists);
+                }
                 if (vendor.Password != null && !PasswordHelper.IsValidPassword(vendor.Password))
                 {
                     ModelState.AddModelError("Password", "Invalid Password");
@@ -288,6 +357,7 @@ namespace OctopusCodesMultiVendor.Controllers
                     {
                         vendor.Logo = "no-logo.jpg";
                     }
+                    vendor.BankStatus = false;
                     VendorAddress vAddr = vendor.defaultAddress;
                     vAddr.Id = Guid.NewGuid();
                     vendor.VendorAddresses.Add(vAddr);
@@ -303,10 +373,14 @@ namespace OctopusCodesMultiVendor.Controllers
                         StartDate = DateTime.Now,
                         EndDate = DateTime.Now.AddMonths(membership.Month)
                     };
-                    ocmde.MemberShipVendors.Add(memberShipVendor);
+                    
                     string body = "There is a new vendor request. Please login to admin to take action";
 
                     EmailHelper.SendEmail(SettingsHelper.Email_Sender, SettingsHelper.Admin_Email, "New Vendor Request", body, null);
+
+                    string body1 = Resources.Email.Register_NewVendor_Body;
+                    string subject1 = string.Format(Resources.Email.Register_NewVendor_Subject,vendor.Name);
+                    EmailHelper.SendEmail(SettingsHelper.Email_Sender,vendor.Email , subject1, body1, null);
                     ocmde.SaveChanges();
                     return View("RegisterSuccess");
                     //return RedirectToAction("Index", "Login", new { Area = "Vendor" });
@@ -317,6 +391,17 @@ namespace OctopusCodesMultiVendor.Controllers
             catch (Exception e)
             {
                 return View("Error", new HandleErrorInfo(e, "Vendors", "Register"));
+            }
+        }
+        private bool ExistsAccount(string username)
+        {
+            try
+            {
+                return ocmde.Accounts.Count(a => a.Username.Equals(username)) > 0;
+            }
+            catch
+            {
+                return false;
             }
         }
 

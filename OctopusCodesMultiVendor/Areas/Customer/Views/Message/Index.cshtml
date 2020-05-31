@@ -30,6 +30,7 @@
                                             <th class="no-sort">Account</th>
                                             <th class="no-sort">Last Message</th>
                                             <th class="no-sort">Last Updated</th>
+                                            <th class="no-sort">Status</th>
                                             <th class="no-sort">View Details</th>
                                         </tr>
                                     </thead>
@@ -39,18 +40,35 @@
                                             <tr>
                                                 <td>
                                                     @{
-                                                        if (message.Vendor != null)
+                                                        string username = null;
+                                                        if (message.Account1 != null)
                                                         {
-                                                            @Html.Raw(message.Vendor.Name);
-                                                        }
-                                                        else if (message.Account1 != null)
-                                                        {
+                                                            username = message.Account1.Username;
                                                             @Html.Raw(message.Account1.FullName);
+                                                        }
+                                                        else if (message.Vendor != null)
+                                                        {
+                                                            username = message.Vendor.Username;
+                                                            @Html.Raw(message.Vendor.Name);
                                                         }
                                                     }
                                                 </td>
                                                 <td>@message.LastMessage</td>
-                                                <td>@message.LastUpdated.ToString("MM/dd/yyyy")</td>
+                                                <td>@message.LastUpdated.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                                <td>
+                                                    @{
+                                                        string connectionID = "";
+                                                        OctopusCodesMultiVendor.SignalR.MessageHub.Connections.TryGetValue(username, out connectionID);
+                                                        if (string.IsNullOrEmpty(connectionID))
+                                                        {
+                                                            @Html.Raw("<div id='" + username + "'>Offline</div>");
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Raw("<div id='" + username + "'>Online</div>");
+                                                        }
+                                                    }
+                                                </td>
                                                 <th class="no-sort">
                                                     <a href="@Url.Action("Detail",new { Id=message.MsgId })">Details</a>
 
@@ -71,3 +89,30 @@
     </div>
     <!-- /.row -->
 </section>
+
+<script type="text/javascript">
+    $(function () {
+        // Declare a proxy to reference the hub.
+
+        var chat = $.connection.MessageHub;
+        // Create a function that the hub can call to broadcast messages.
+        chat.client.broadcastConnect = function (connectionId,username) {
+            console.log("connect.connectionId:" + connectionId + "username:" + username);
+            $('#' + username).text('Online');
+            // Html encode display name and message.
+
+            // Add the message to the page.
+
+        };
+        chat.client.broadcastDisconnect = function (connectionId, username) {
+            console.log("disconnect.connectionId:" + connectionId + "email:" + username);
+            $('#' + username).text('Offline');
+            // Html encode display name and message.
+
+            // Add the message to the page.
+
+        };
+
+    });
+
+</script>

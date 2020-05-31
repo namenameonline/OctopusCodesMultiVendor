@@ -30,6 +30,7 @@
                                             <th class="no-sort">Account</th>
                                             <th class="no-sort">Last Message</th>
                                             <th class="no-sort">Last Updated</th>
+                                            <th class="no-sort">Status</th>
                                             <th class="no-sort">View Details</th>
                                         </tr>
                                     </thead>
@@ -39,21 +40,38 @@
                                         <tr>
                                             <td>
                                                 @{
+                                                    string username=null;
                                                     if (message.Account != null)
-                                                    {                                                       
+                                                    {
+                                                        username = message.Account.Username;
                                                         @Html.Raw(message.Account.FullName);
                                                     }
                                                     else if (message.Account1 != null)
                                                     {
+                                                        username = message.Account1.Username;
                                                         @Html.Raw(message.Account1.FullName);
                                                     }
                                                 }
                                             </td>
                                             <td>@message.LastMessage</td>
                                             <td>@message.LastUpdated.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                            <td>
+                                                @{
+                                                    string connectionID = "";
+                                                    OctopusCodesMultiVendor.SignalR.MessageHub.Connections.TryGetValue(username, out connectionID);
+                                                    if (string.IsNullOrEmpty(connectionID))
+                                                    {
+                                                        @Html.Raw("<div id='" + username + "'>Offline</div>");
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw("<div id='" + username + "'>Online</div>");
+                                                    }
+                                                                                        }
+                                                                                    </td>
                                             <th class="no-sort">
-                                            <a href="@Url.Action("Detail",new { Id=message.MsgId })">Details</a>
-                                                
+                                                <a href="@Url.Action("Detail",new { Id=message.MsgId })">Details</a>
+
                                             </th>
                                         </tr>
                                         }

@@ -21,6 +21,7 @@ namespace OctopusCodesMultiVendor.Models
         public int OrderId { get; set; }
     
         public virtual Order Order { get; set; }
+        public virtual Order Order1 { get; set; }
         public virtual Vendor Vendor { get; set; }
     }
 }

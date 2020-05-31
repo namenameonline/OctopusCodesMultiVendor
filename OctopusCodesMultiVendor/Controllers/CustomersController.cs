@@ -68,7 +68,7 @@ namespace OctopusCodesMultiVendor.Controllers
                 ocmde.ForgetPasswords.Remove(fp);
                 ocmde.SaveChanges();
                 ViewBag.infoMessage = "You have successfully reset your password";
-                return View("Login", "Customer");
+                return RedirectToAction("Login", "Customer");
             }
             catch (Exception e)
             {
@@ -110,12 +110,12 @@ namespace OctopusCodesMultiVendor.Controllers
                 forgetPassword.Username = dbAccount.Username;
                 ocmde.ForgetPasswords.Add(forgetPassword);
                 ocmde.SaveChanges();
-                string body = string.Format(SettingsHelper.Forget_Pwd_Content, SettingsHelper.BASE_URL + "/Customers/Reset/" + forgetPassword.Id.ToString());
+                string body = string.Format(Resources.Email.Forget_Pwd_Content, SettingsHelper.BASE_URL + "/Customers/Reset/" + forgetPassword.Id.ToString());
                 //string body = string.Format(ocmde.Settings.Find(22).Value, "/Customer/Reset/" + forgetPassword.Id.ToString()); ;
                 //TODO:
                 //Send email to the account for reset
 
-                EmailHelper.SendEmail(SettingsHelper.Email_Sender, account.Email,SettingsHelper.Forget_Pwd_Subject, body, null);
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, account.Email, Resources.Email.Forget_Pwd_Subject, body, null);
                 ViewBag.infoMessage = "Please check your email for the password reset link";
                 return View("Forget", account);
             }
@@ -132,6 +132,10 @@ namespace OctopusCodesMultiVendor.Controllers
                 if (account.Username != null && account.Username.Length > 0)
                 {
                     if (Exists(account.Username))
+                    {
+                        ModelState.AddModelError("username", Resources.Vendor.Username_already_exists);
+                    }
+                    if (ExistsVendor(account.Username))
                     {
                         ModelState.AddModelError("username", Resources.Vendor.Username_already_exists);
                     }
@@ -160,6 +164,10 @@ namespace OctopusCodesMultiVendor.Controllers
                     string body = "There is a new customer request. Please login to admin to take action";
 
                     EmailHelper.SendEmail(SettingsHelper.Email_Sender,SettingsHelper.Admin_Email,"New Customer Request", body, null);
+
+                    string body1 = Resources.Email.Register_NewAcct_Body;
+                    string subject1 = string.Format(Resources.Email.Register_NewAcct_Subject, account.FullName);
+                    EmailHelper.SendEmail(SettingsHelper.Email_Sender, account.Email, subject1, body1, null);
                     ocmde.SaveChanges();
                     //return RedirectToAction("Index", "Login", new { Area = "Customer" });
                     return View("RegisterSuccess");
@@ -192,6 +200,10 @@ namespace OctopusCodesMultiVendor.Controllers
         private bool Exists(string username)
         {
             return ocmde.Accounts.Count(a => a.Username.Equals(username) && !a.IsAdmin) > 0;
+        }
+        private bool ExistsVendor(string username)
+        {
+            return ocmde.Vendors.Count(a => a.Username.Equals(username)) > 0;
         }
     }
 }

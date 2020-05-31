@@ -17,10 +17,10 @@ namespace OctopusCodesMultiVendor.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Order()
         {
-            this.OrdersDetails = new HashSet<OrdersDetail>();
             this.OrderAddresses = new HashSet<OrderAddress>();
-            this.VendorPendingPayments = new HashSet<VendorPendingPayment>();
+            this.OrdersDetails = new HashSet<OrdersDetail>();
             this.VendorPendingDeliveries = new HashSet<VendorPendingDelivery>();
+            this.VendorPendingPayments = new HashSet<VendorPendingPayment>();
         }
     
         public int Id { get; set; }
@@ -29,22 +29,18 @@ namespace OctopusCodesMultiVendor.Models
         public int CustomerId { get; set; }
         public int VendorId { get; set; }
         public int OrderStatusId { get; set; }
-        public Nullable<int> PaymentId { get; set; }
-        public int PaymentStatusId { get; set; }
         public string PaymentReference { get; set; }
     
         public virtual Account Account { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderAddress> OrderAddresses { get; set; }
         public virtual OrderStatu OrderStatu { get; set; }
-        public virtual Payment Payment { get; set; }
         public virtual Vendor Vendor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrdersDetail> OrdersDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderAddress> OrderAddresses { get; set; }
+        public virtual ICollection<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VendorPendingPayment> VendorPendingPayments { get; set; }
-        public virtual PaymentStatu PaymentStatu { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VendorPendingDelivery> VendorPendingDeliveries { get; set; }
     }
 }

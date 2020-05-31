@@ -47,7 +47,7 @@ namespace OctopusCodesMultiVendor.Controllers
             {
                 var Session= HttpContext.Current.Session;
                 var product = ocmde.Products.Find(id);
-                if (!VendorHelper.checkExpires(product.VendorId))
+                if (!VendorHelper.IsValid(product.VendorId))
                 {
                     return "NOTOK;EXPIRED";
                 }

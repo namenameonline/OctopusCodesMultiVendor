@@ -9,8 +9,10 @@ namespace OctopusCodesMultiVendor.Models.ViewModels.Messages
     {
         public int SendTo { get; set; }
 
+        public string recipient { get; set; }
         public int SenderType { get; set; }
         public string Body { get; set; }
-       
+
+
     }
 }

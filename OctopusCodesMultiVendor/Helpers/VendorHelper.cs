@@ -10,17 +10,18 @@ namespace OctopusCodesMultiVendor.Helpers
     {
         private static OctopusCodesMultiVendorsEntities ocmde = new OctopusCodesMultiVendorsEntities();
 
-        public static bool checkExpires(int vendorId)
+        public static bool IsValid(int vendorId)
         {
             try
             {
-                var lastMemberShip = ocmde.MemberShipVendors.Where(m => m.VendorId == vendorId).OrderByDescending(m => m.Id).First();
-                return lastMemberShip.EndDate >= DateTime.Now;
+                return ocmde.Vendors.Count(m => m.Id == vendorId && m.Status && m.BankStatus) >0;
+                
             }
             catch
             {
                 return false;
             }
+            return false;
         }
     }
 }

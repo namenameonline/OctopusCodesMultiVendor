@@ -2,6 +2,7 @@
 using MailKit.Net.Imap;
 using MailKit.Search;
 using OctopusCodesMultiVendor.Helpers;
+using OctopusCodesMultiVendor.Helpers.Interface;
 using OctopusCodesMultiVendor.Models;
 using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Models.ViewModels.Messages;
@@ -11,11 +12,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
 {
     [CustomAuthorize(Roles = "Customer")]
-    public class MessageController : Controller
+    public class MessageController : Controller, MessageEvents
     {
         private OctopusCodesMultiVendorsEntities ocmde = new OctopusCodesMultiVendorsEntities();
 
@@ -55,14 +57,15 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 {
                     msg.SendTo = (int)messageHeader.VendorId;
                     msg.SenderType = (int)SenderType.Vendor;
+                    msg.recipient = ocmde.Vendors.Find(msg.SendTo).Username;
                 }
                 else
                 {
                     msg.SendTo = (int)messageHeader.AdminId;
                     msg.SenderType = (int)SenderType.Admin;
-
+                    msg.recipient = ocmde.Accounts.Find(msg.SendTo).Username;
                 }
-               
+                
                 return View(msg);
             }
             catch (Exception e)
@@ -70,57 +73,11 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 return View("Error", new HandleErrorInfo(e, "Message", "Index"));
             }
         }
-        [HttpPost]
-        public ActionResult SendMessage(MessageDetailViewModel message)
+       
+
+        public void OnNewMessageReceived(DateTime dateTime, string content, int sender)
         {
-            try
-            {
-                var account = (OctopusCodesMultiVendor.Models.Account)SessionPersister.account;
-                
-                MessageHeader mh = ocmde.MessageHeaders.FirstOrDefault(a => a.CustomerId == account.Id&&a.VendorId==message.SendTo);
-                string recipientEmail = "";
-                if (message.SenderType == (int)SenderType.Vendor)
-                {
-                    mh = ocmde.MessageHeaders.FirstOrDefault(a => a.CustomerId == account.Id && a.VendorId == message.SendTo);
-                    recipientEmail = ocmde.Vendors.Find(mh.VendorId).Email;
-                }
-                else if (message.SenderType == (int)SenderType.Admin)
-                {
-                    mh = ocmde.MessageHeaders.FirstOrDefault(a => a.CustomerId == account.Id && a.AdminId == message.SendTo);
-                    recipientEmail = ocmde.Accounts.Find(mh.AdminId).Email;
-                }
-                bool newconversation = false;
-                if (mh == null)
-                {
-                    return View("Error", new HandleErrorInfo(new Exception("Invalid access"), "Message", "Index"));
-                }
-                mh.LastMessage = message.Body;
-                mh.LastUpdated = DateTime.Now;
-                MessageDetail messageDetail = new MessageDetail();
-                messageDetail.Id = Guid.NewGuid();
-                messageDetail.DateCreation = DateTime.Now;
-                messageDetail.Body = message.Body;
-                messageDetail.Status = true;
-                messageDetail.Sender = (int)SenderType.Customer;
-                mh.MessageDetails.Add(messageDetail);
-                if (newconversation)
-                    ocmde.MessageHeaders.Add(mh);
-                ocmde.SaveChanges();
-                string body = string.Format(SettingsHelper.Cust_SendMsg_Content, account.FullName, message.Body,
-                    EncryptHelper.EncryptString(SettingsHelper.Encryption_Key, mh.VendorId.ToString())
-
-                    );
-                
-                EmailHelper.SendEmail(SettingsHelper.Email_Sender, recipientEmail, SettingsHelper.Cust_SendMsg_Subject, body, null);
-                TempData["message"] = Resources.Vendor.messages_sent_success;
-                //return View("Detail",new { Id= mh.MsgId });
-                return RedirectToAction("Detail", new { Id = mh.MsgId });
-            }
-            catch (Exception e)
-            {
-                return View("Error", new HandleErrorInfo(e, "Vendors", "SendMessage"));
-            }
+            //Clients.All.broadcastMessage(name, message);
         }
-
     }
 }

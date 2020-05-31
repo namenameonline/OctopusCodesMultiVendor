@@ -1,0 +1,82 @@
+﻿@model OctopusCodesMultiVendor.Models.VendorPayment
+
+@{
+    ViewBag.Title = "ViewPaymentDetail";
+    Layout = "~/Areas/Vendor/Views/Shared/_LayoutPage.cshtml";
+}
+
+<h2>ViewPaymentDetail</h2>
+
+<div>
+    <h4>VendorPayment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VendorId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VendorId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Bank)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Bank)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderId)
+        </dd>
+
+    </dl>
+</div>
+<p>   
+    @Html.ActionLink("Back", "Index")
+</p>

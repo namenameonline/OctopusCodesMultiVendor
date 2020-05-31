@@ -71,6 +71,7 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                 var vendor = (OctopusCodesMultiVendor.Models.Vendor)SessionPersister.account;
                 vendor.defaultAddress = vendor.VendorAddresses.FirstOrDefault();
                 vendor.vendorPaymentInfo = vendor.VendorPaymentInfoes.FirstOrDefault();
+                ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                 return View("Profile", vendor);
             }
             catch (Exception e)
@@ -120,6 +121,7 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                         logo.SaveAs(Path.Combine(Server.MapPath("~/Content/User/Images"), Path.GetFileName(logo.FileName)));
                         currentVendor.Logo = Path.GetFileName(logo.FileName);
                     }
+                    
                     currentVendor.Email = vendor.Email;
                     currentVendor.Name = vendor.Name;
                     currentVendor.Phone = vendor.Phone;
@@ -138,21 +140,40 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                         acctAddressOriginal.City = vendor.defaultAddress.City;
                         acctAddressOriginal.ZipCode = vendor.defaultAddress.ZipCode;
                     }
+
                     if (currentVendor.VendorPaymentInfoes.Count <= 0)
                     {
-                        VendorPaymentInfo paymentInfo = vendor.vendorPaymentInfo;
-                        paymentInfo.CreditCardNo = vendor.vendorPaymentInfo.CreditCardNo;
-                        paymentInfo.ExpiryDate = vendor.vendorPaymentInfo.ExpiryDate;
-                        paymentInfo.FullName = vendor.vendorPaymentInfo.FullName;
+                        VendorPaymentInfo paymentInfo = new VendorPaymentInfo();
+                        paymentInfo.Id = Guid.NewGuid();
+                        paymentInfo.AccountNo = vendor.vendorPaymentInfo.AccountNo;
+                        paymentInfo.Bank = vendor.vendorPaymentInfo.Bank;
+                        paymentInfo.Name = vendor.vendorPaymentInfo.Name;
+                        paymentInfo.VendorId = vendor.Id;
                         currentVendor.VendorPaymentInfoes.Add(paymentInfo);
+                        currentVendor.BankStatus = false;
                     }
                     else
                     {
+                        bool isChanged = false;
                         VendorPaymentInfo acctPaymentOriginal = currentVendor.VendorPaymentInfoes.FirstOrDefault();
-                        acctPaymentOriginal.CreditCardNo = vendor.vendorPaymentInfo.CreditCardNo;
-                        acctPaymentOriginal.ExpiryDate = vendor.vendorPaymentInfo.ExpiryDate;
-                        acctPaymentOriginal.FullName = vendor.vendorPaymentInfo.FullName;
-                    }
+                        if (acctPaymentOriginal.AccountNo!=vendor.vendorPaymentInfo.AccountNo|| acctPaymentOriginal.Bank!= vendor.vendorPaymentInfo.Bank
+                            || acctPaymentOriginal.Name != vendor.vendorPaymentInfo.Name)
+                            isChanged = true;
+
+                            acctPaymentOriginal.AccountNo = vendor.vendorPaymentInfo.AccountNo;
+                            acctPaymentOriginal.Bank = vendor.vendorPaymentInfo.Bank;
+                            acctPaymentOriginal.Name = vendor.vendorPaymentInfo.Name;
+                            if (isChanged)
+                            {
+                                currentVendor.BankStatus = false;
+                                string body = string.Format("Vendor:{0} requested to update bank account. Please login to admin to take action",currentVendor.Username);
+
+                                EmailHelper.SendEmail(SettingsHelper.Email_Sender, SettingsHelper.Admin_Email, "Vendor Update Bank Account Request", body, null);
+                                ocmde.SaveChanges();
+                            }
+                        }
+                        
+                    
                     ocmde.SaveChanges();
                     SessionPersister.account = ocmde.Vendors.Find(vendor.Id);
                     return RedirectToAction("Profile", "Login");
@@ -187,7 +208,7 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
                 var vendor = ocmde.Vendors.SingleOrDefault(v => v.Username.Equals(username));
                 if (vendor != null)
                 {
-                    if (BCrypt.Net.BCrypt.Verify(password, vendor.Password) && vendor.Status && VendorHelper.checkExpires(vendor.Id))
+                    if (BCrypt.Net.BCrypt.Verify(password, vendor.Password) && vendor.Status)
                     {                        
 
                         return vendor;

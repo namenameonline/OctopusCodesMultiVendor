@@ -31,6 +31,7 @@ namespace OctopusCodesMultiVendor.Models
     {
         public VendorAddress defaultAddress { get; set; }
         public VendorPaymentInfo vendorPaymentInfo { get; set; }
+
     }
 
 }

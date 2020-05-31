@@ -119,12 +119,12 @@ namespace OctopusCodesMultiVendor.Controllers
                 if (newconversation)
                     ocmde.MessageHeaders.Add(mh);
                 ocmde.SaveChanges();
-                string body = string.Format(SettingsHelper.Cust_SendMsg_Content, sender, message.Body,
+                string body = string.Format(Resources.Email.Cust_SendMsg_Content, sender, message.Body,
                     EncryptHelper.EncryptString(SettingsHelper.Encryption_Key, mh.AdminId.ToString())
 
                     );
                 string adminEmail = ocmde.Accounts.Find(SettingsHelper.ContactUsId).Email;
-                EmailHelper.SendEmail(SettingsHelper.Email_Sender, adminEmail, SettingsHelper.Cust_SendMsg_Subject, body, null);
+                EmailHelper.SendEmail(SettingsHelper.Email_Sender, adminEmail, string.Format(Resources.Email.Cust_SendMsg_Subject,sender), body, null);
                 TempData["message"] = Resources.Vendor.messages_sent_success;
                 return RedirectToAction("SendMessage");
             }

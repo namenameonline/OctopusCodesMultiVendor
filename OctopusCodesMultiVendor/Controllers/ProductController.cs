@@ -25,7 +25,7 @@ namespace OctopusCodesMultiVendor.Controllers
                 var products = new List<Product>();
                 listProducts.ForEach(p =>
                 {
-                    if (VendorHelper.checkExpires(p.VendorId))
+                    if (VendorHelper.IsValid(p.VendorId))
                     {
                         products.Add(p);
                     }
@@ -50,7 +50,7 @@ namespace OctopusCodesMultiVendor.Controllers
                 var products = new List<Product>();
                 listProducts.ForEach(p =>
                 {
-                    if (VendorHelper.checkExpires(p.VendorId))
+                    if (VendorHelper.IsValid(p.VendorId))
                     {
                         products.Add(p);
                     }
@@ -76,7 +76,7 @@ namespace OctopusCodesMultiVendor.Controllers
             try
             {
                 var product = ocmde.Products.Find(id);
-                if (!VendorHelper.checkExpires(product.VendorId))
+                if (!VendorHelper.IsValid(product.VendorId))
                 {
                     return RedirectToAction("Expires", "Product");
                 }

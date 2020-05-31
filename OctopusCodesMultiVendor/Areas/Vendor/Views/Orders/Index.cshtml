@@ -32,8 +32,9 @@
                                             <th>Customer Name</th>
                                             <th class="no-sort">Order Status</th>
                                             <th class="no-sort">Amount</th>
-                                            <th class="no-sort">Payment Status</th>
+                                            <th class="no-sort">Order Status</th>
                                             <th>Action</th>
+                                            <th class="no-sort">View Payment Detail</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -55,9 +56,14 @@
                                                 }
                                                 
                                             </td>
-                                           
+                                            <td>@order.OrderStatu.Name</td>
                                             <td>
-                                                @order.PaymentStatu.Name
+                                                @{ 
+                                                    if(order.OrderStatusId== OctopusCodesMultiVendor.Helpers.OrderStatusHelper.PaymentDisbursed)
+                                                    {
+                                                        Url.Action("ViewPaymentDetail", new { orderId = order.Id });
+                                                    }
+                                                }
                                             </td>
                                             <td>
                                                 <a href="@Url.Action("Detail", "Orders", new { id = order.Id })">View Detail</a>
