@@ -405,8 +405,9 @@ namespace OctopusCodesMultiVendor.Controllers
                     string subject1 = string.Format(Resources.Email.Register_NewVendor_Subject,vendor.Name);
                     EmailHelper.SendEmail(SettingsHelper.Email_Sender,vendor.Email , subject1, body1, null);
                     ocmde.SaveChanges();
+
                     return View("RegisterSuccess");
-                    //return RedirectToAction("Index", "Login", new { Area = "Vendor" });
+
                 }
                 ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                 return View("Register", vendor);
