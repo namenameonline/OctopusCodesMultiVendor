@@ -14,6 +14,11 @@ using OctopusCodesMultiVendor.Models.ViewModels;
 using OctopusCodesMultiVendor.Models.ViewModels.Messages;
 using OctopusCodesMultiVendor.Models.ViewModels.Login;
 
+using CaptchaMvc.Infrastructure;
+using CaptchaMvc.Interface;
+using CaptchaMvc.Models;
+using CaptchaMvc.HtmlHelpers;
+
 namespace OctopusCodesMultiVendor.Controllers
 {
     public class VendorsController : Controller
@@ -310,6 +315,17 @@ namespace OctopusCodesMultiVendor.Controllers
         {
             try
             {
+
+                var captchaManager = (DefaultCaptchaManager)CaptchaUtils.CaptchaManager;
+                captchaManager.CharactersFactory = () => "my character";
+                captchaManager.PlainCaptchaPairFactory = length =>
+                {
+                    string randomText = RandomText.Generate(captchaManager.CharactersFactory(), length);
+                    bool ignoreCase = false;
+                    return new KeyValuePair<string, ICaptchaValue>(Guid.NewGuid().ToString(format: "N"),
+                        new StringCaptchaValue(randomText, value: randomText, ignoreCase: ignoreCase));
+                };
+
                 ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                 return View("Register", new Vendor());
             }
@@ -340,6 +356,13 @@ namespace OctopusCodesMultiVendor.Controllers
                 if (logo != null && logo.ContentLength > 0 && !logo.ContentType.Contains("image"))
                 {
                     ViewBag.errorPhoto = Resources.Vendor.Photo_Invalid;
+                    return View("Register", vendor);
+                }
+
+                if (!this.IsCaptchaValid(errorText: ""))
+                {
+                    ViewBag.ErrorMessage = "Captcha is not valid";
+                    ViewBag.cities = ocmde.RajaOngkir_CityMapping.OrderBy(b => b.city_name).Select(a => a.city_name);
                     return View("Register", vendor);
                 }
 

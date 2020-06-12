@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Work\MyProject\sembakoonline\Repository\SourceCode\OctopusCodesMultiVendor\OctopusCodesMultiVendor\Models\ModelOctopusCodesMultiVendors.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\My Project\OctopusCodesMultiVendor-master\WORKSPACE\OctopusCodesMultiVendor\Models\ModelOctopusCodesMultiVendors.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
