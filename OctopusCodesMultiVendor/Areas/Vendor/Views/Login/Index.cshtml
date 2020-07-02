@@ -1,14 +1,13 @@
 ﻿@{
-    Layout = null;
+                /**/
+
+                Layout = null;
 }
-
 @using OctopusCodesMultiVendor.Models;
-
-@{  
+@{
     OctopusCodesMultiVendorsEntities ocmd = new OctopusCodesMultiVendorsEntities();
     var websiteName = ocmd.Settings.Find(4).Value;
 }
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,6 +33,155 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <meta name="google-signin-client_id" content="752060730122-k7ftanjhrm7kqgbq21appaio6bv6v6ra.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js"></script>
+
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+
+    <script>
+        function onSignIn(googleUser) {
+
+            signOut();
+
+            var profile = googleUser.getBasicProfile();
+
+            //alert('Email: ' + profile.getEmail());
+
+            $.ajax({
+                url: '/Vendor/Login/Process/?emailGoogle=' + profile.getEmail(),
+                type: 'POST',
+                dataType: 'json',
+                cache: false,
+                success: function (json) {
+
+                    if (json.error == 1 || json.error == 2) {
+                        alert('User email does not match.')
+                        return false;
+                    }
+
+                    window.location = '/Vendor/Orders/Index';
+
+                },
+                error: function (json) {
+
+                }
+            });
+
+        }
+
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+
+            auth2.signOut().then(function () {
+
+                console.log('User signed out.');
+            });
+
+        }
+
+
+        window.onload = function (e) {
+
+            FB.init({
+
+                appId: '988480734905248',
+                status: true,
+                cookie: true,
+                xfbml: true
+            });
+
+        }
+
+        function loginFB() {
+
+            FbLogout();
+
+            var email = '';
+
+            FB.getLoginStatus(function (response) {
+                if (response.status == 'connected') {
+
+                    FB.api('/me', { locale: 'en_US', fields: 'name, email' }, function (userInfo) {
+
+                        //alert('Email : ' + userInfo.email);
+
+                        email = userInfo.email;
+
+                        $.ajax({
+                            url: '/Vendor/Login/Process/?emailGoogle=' + email,
+                            type: 'POST',
+                            dataType: 'json',
+                            cache: false,
+                            success: function (json) {
+
+                                if (json.error == 1 || json.error == 2) {
+                                    alert('User email does not match.')
+                                    return false;
+                                }
+
+                                window.location = '/Vendor/Orders/Index';
+
+                            },
+                            error: function (json) {
+
+                            }
+                        });
+                    });
+
+                } else {
+
+                    FB.login(function (response) {
+                        if (response.authResponse) {
+
+                            FB.api('/me', { locale: 'en_US', fields: 'name, email' }, function (userInfo) {
+
+
+                                //alert('Email : ' + userInfo.email);
+
+                                email = userInfo.email;
+
+                                $.ajax({
+                                    url: '/Vendor/Login/Process/?emailGoogle=' + email,
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    cache: false,
+                                    success: function (json) {
+
+                                        if (json.error == 1 || json.error == 2) {
+                                            alert('User email does not match.')
+                                            return false;
+                                        }
+
+                                        window.location = '/Vendor/Orders/Index';
+
+                                    },
+                                    error: function (json) {
+
+                                    }
+                                });
+
+
+                            });
+
+                        } else {
+                            console.log('Auth cancelled.')
+                        }
+                    }, { scope: 'email' });
+                }
+
+            });
+
+        }
+
+        function FbLogout() {
+
+            FB.logout(function () { document.location.reload(); });
+        }
+
+
+    </script>
+
+
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -44,6 +192,20 @@
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
+
+            <div class="form-group has-feedback">
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <button id="btnFB" onclick="loginFB();">
+                    <img src="~/Content/Images/sign_facebook.jpg" />
+                </button>
+            </div>
+
+            <div class="form-group has-feedback">
+                <center>-- OR --</center>
+            </div>
 
             <form action="@Url.Action("Process", "Login")" method="post">
                 @if (ViewBag.error != null)
@@ -62,10 +224,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-
-                        <a href="@Url.Action("Forget", "../Vendors")" class="text-center">Forget Password</a>
                     </div>
-                    
                     <!-- /.col -->
                     <div class="col-xs-4">
                         <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
@@ -97,4 +256,3 @@
     </script>
 </body>
 </html>
-

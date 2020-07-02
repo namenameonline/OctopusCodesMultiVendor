@@ -7,12 +7,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using Newtonsoft.Json;
+
 namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
 {
     public class LoginController : Controller
     {
         private OctopusCodesMultiVendorsEntities ocmde = new OctopusCodesMultiVendorsEntities();
-        
+
         public ActionResult Index()
         {
             ViewBag.redirectUrl = "";
@@ -24,15 +26,52 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
             ViewBag.redirectUrl = redirectUrl;
             return View();
         }
+
         [HttpPost]
-        public ActionResult Process(FormCollection fc)
+        public ActionResult Process(FormCollection fc, string emailGoogle = "")
         {
             try
             {
+                string redirectUrl = fc["redirectUrl"];
+
+                // CHECK EMAIL GOOGLE & FB
+                if (!string.IsNullOrEmpty(emailGoogle))
+                {
+                    object result = null;
+
+
+                    var emailAccount = CheckEmail(emailGoogle);
+
+                    if (emailAccount == null)
+                    {
+                        ViewBag.error = Resources.Customer.Invalid_Account;
+                        result = new { error = 1 };
+
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        if (!emailAccount.Status)
+                        {
+                            ViewBag.error = Resources.Customer.Pending_Account;
+                            result = new { error = 2 };
+
+                            return Json(result, JsonRequestBehavior.AllowGet);
+                        }
+
+                        SessionPersister.account = emailAccount;
+
+                        result = new { error = 0 };
+
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
                 string username = fc["username"];
                 string password = fc["password"];
-                string redirectUrl = fc["redirectUrl"];
+
                 var account = login(username, password);
+
                 if (account == null)
                 {
                     ViewBag.error = Resources.Customer.Invalid_Account;
@@ -40,11 +79,13 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 }
                 else
                 {
+
                     if (!account.Status)
                     {
                         ViewBag.error = Resources.Customer.Pending_Account;
                         return View("Index");
                     }
+
                     SessionPersister.account = account;
                     if (string.IsNullOrEmpty(redirectUrl))
                         return RedirectToAction("Index", "Orders");
@@ -95,7 +136,7 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
             try
             {
                 var loginedAccount = (Account)SessionPersister.account;
-                
+
                 var currentAccount = ocmde.Accounts.SingleOrDefault(a => a.Id == account.Id);
 
                 if (account.Username != null && account.Username.Length > 0 && loginedAccount.Username != account.Username)
@@ -121,17 +162,17 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                     currentAccount.FullName = account.FullName;
                     currentAccount.Phone = account.Phone;
                     currentAccount.Username = account.Username;
-                    
-                    if(currentAccount.AccountAddresses.Count<=0)
+
+                    if (currentAccount.AccountAddresses.Count <= 0)
                     {
                         AccountAddress acctAddress = account.defaultAddress;
-                        acctAddress.Id = Guid.NewGuid();                       
+                        acctAddress.Id = Guid.NewGuid();
                         currentAccount.AccountAddresses.Add(acctAddress);
                     }
                     else
                     {
                         AccountAddress acctAddressOriginal = currentAccount.AccountAddresses.FirstOrDefault();
-                        AccountAddress forUpdate=ocmde.AccountAddresses.Find(acctAddressOriginal.Id);
+                        AccountAddress forUpdate = ocmde.AccountAddresses.Find(acctAddressOriginal.Id);
                         forUpdate.City = account.defaultAddress.City;
                         forUpdate.LineAddress1 = account.defaultAddress.LineAddress1;
                         forUpdate.LineAddress2 = account.defaultAddress.LineAddress2;
@@ -193,5 +234,24 @@ namespace OctopusCodesMultiVendor.Areas.Customer.Controllers
                 return null;
             }
         }
+
+        private Account CheckEmail(string email)
+        {
+            try
+            {
+                var account = ocmde.Accounts.SingleOrDefault(a => a.Email.Equals(email) && a.Status.Equals(true));
+
+                if (account != null)
+                    return account;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
     }
 }

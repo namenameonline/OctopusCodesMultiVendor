@@ -20,10 +20,45 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
         }
 
         [HttpPost]
-        public ActionResult Process(FormCollection fc)
+        public ActionResult Process(FormCollection fc, string emailGoogle = "")
         {
             try
             {
+
+                // CHECK EMAIL GOOGLE & FB
+                if (!string.IsNullOrEmpty(emailGoogle))
+                {
+                    object result = null;
+
+
+                    var emailVendor = CheckEmail(emailGoogle);
+
+                    if (emailVendor == null)
+                    {
+                        ViewBag.error = Resources.Customer.Invalid_Account;
+                        result = new { error = 1 };
+
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        if (!emailVendor.Status)
+                        {
+                            ViewBag.error = Resources.Customer.Pending_Account;
+                            result = new { error = 2 };
+
+                            return Json(result, JsonRequestBehavior.AllowGet);
+                        }
+
+                        SessionPersister.account = emailVendor;
+
+                        result = new { error = 0 };
+
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+
                 string username = fc["username"];
                 string password = fc["password"];
                 var vendor = login(username, password);
@@ -222,7 +257,22 @@ namespace OctopusCodesMultiVendor.Areas.Vendor.Controllers
             }
         }
 
-        
+        private OctopusCodesMultiVendor.Models.Vendor CheckEmail(string email)
+        {
+            try
+            {
+                var vendor = ocmde.Vendors.SingleOrDefault(a => a.Email.Equals(email) && a.Status.Equals(true));
+
+                if (vendor != null)
+                    return vendor;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
     }
 }
