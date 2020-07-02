@@ -53,8 +53,12 @@
                 cache: false,
                 success: function (json) {
 
-                    if (json.error == 1 || json.error == 2) {
+                    if (json.error == 1) {
                         alert('User email does not match.')
+                        return false;
+                    }
+                    else if (json.error == 2) {
+                        alert('Status customer tidak aktif.')
                         return false;
                     }
 
@@ -113,8 +117,12 @@
                             cache: false,
                             success: function (json) {
 
-                                if (json.error == 1 || json.error == 2) {
+                                if (json.error == 1) {
                                     alert('User email does not match.')
+                                    return false;
+                                }
+                                else if (json.error == 2) {
+                                    alert('Status customer tidak aktif.')
                                     return false;
                                 }
 
@@ -146,8 +154,12 @@
                                     cache: false,
                                     success: function (json) {
 
-                                        if (json.error == 1 || json.error == 2) {
+                                        if (json.error == 1) {
                                             alert('User email does not match.')
+                                            return false;
+                                        }
+                                        else if (json.error == 2) {
+                                            alert('Status customer tidak aktif.')
                                             return false;
                                         }
 
