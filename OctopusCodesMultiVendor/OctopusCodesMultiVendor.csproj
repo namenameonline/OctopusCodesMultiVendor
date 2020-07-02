@@ -1124,6 +1124,8 @@
     <Content Include="Content\Cart\style.css" />
     <Content Include="Content\CreditCard\css\style.css" />
     <Content Include="Content\CreditCard\js\index.js" />
+    <Content Include="Content\Images\sign_facebook.jpg" />
+    <Content Include="Content\Images\sign_google.jpg" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\User\bootstrap\css\bootstrap-responsive.min.css" />
     <Content Include="Content\User\bootstrap\css\bootstrap.css" />
